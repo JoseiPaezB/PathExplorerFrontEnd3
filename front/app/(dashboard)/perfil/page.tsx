@@ -316,7 +316,10 @@ export default function PerfilPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Objetivo a Corto Plazo (6 meses)</h4>
-                      <Badge className="bg-primary">En progreso</Badge>
+                      <Badge className="inline-flex items-center px-3 py-1 whitespace-nowrap bg-emerald-500 text-white">
+                        En progreso
+                      </Badge>
+
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Obtener certificación en AWS Solutions Architect Professional y liderar un proyecto de migración a

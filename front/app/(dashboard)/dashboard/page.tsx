@@ -195,7 +195,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-small">AWS Solutions Architect</span>
-                    <Badge className="bg-amber-500 text-white mr-2">30 días</Badge>
+                    <Badge className="bg-amber-500 text-white mr-1">30 días</Badge>
                   </div>
                 </div>
                 <span className="text-xs text-muted-foreground gap-3">Vence: 15/04/2025</span>
@@ -543,7 +543,7 @@ export default function DashboardPage() {
                     description: "Has completado la certificación de React Avanzado",
                     time: "Hace 2 días",
                     icon: Award,
-                    color: "bg-amber-100 text-amber-600",
+                    color: "text-amber-600",
                     type: "success",
                   },
                   {
@@ -551,7 +551,7 @@ export default function DashboardPage() {
                     description: "Has sido asignado al proyecto Portal de Clientes",
                     time: "Hace 1 semana",
                     icon: Briefcase,
-                    color: "bg-blue-100 text-blue-600",
+                    color: "text-blue-600",
                     type: "info",
                   },
                   {
@@ -559,7 +559,7 @@ export default function DashboardPage() {
                     description: "Tu manager ha completado tu evaluación trimestral",
                     time: "Hace 2 semanas",
                     icon: FileText,
-                    color: "bg-green-100 text-green-600",
+                    color: "text-green-600",
                     type: "success",
                   },
                   {
@@ -567,7 +567,7 @@ export default function DashboardPage() {
                     description: "Se te ha recomendado el curso de AWS Solutions Architect",
                     time: "Hace 3 semanas",
                     icon: BookOpen,
-                    color: "bg-purple-100 text-purple-600",
+                    color: "text-purple-600",
                     type: "info",
                   },
                 ].map((activity, index) => (
@@ -582,15 +582,15 @@ export default function DashboardPage() {
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   >
-                    <div className={`mt-0.5 rounded-full p-2 ${activity.color}`}>
-                      {activity.type === "success" ? (
-                        <CheckCircle className="h-4 w-4" />
-                      ) : activity.type === "info" ? (
-                        <InfoIcon className="h-4 w-4" />
-                      ) : (
-                        <activity.icon className="h-4 w-4" />
-                      )}
-                    </div>
+                    <div className={`mt-0.5 rounded-full py-4 px-3 flex items-center justify-center ${activity.color}`}>
+                    {activity.type === "success" ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : activity.type === "info" ? (
+                      <InfoIcon className="h-5 w-5" />
+                    ) : (
+                      <activity.icon className="h-5 w-5" />
+                    )}
+                  </div>
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium leading-none">{activity.title}</p>
                       <p className="text-sm text-muted-foreground">{activity.description}</p>
