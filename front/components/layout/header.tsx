@@ -22,9 +22,10 @@ import { useAuth } from "@/contexts/auth-context"
 
 interface HeaderProps {
   user: AuthUser | null
+  collapsed: boolean
 }
 
-export function Header({ user }: HeaderProps) {
+export function Header({ user,collapsed }: HeaderProps) {
   const [showSearch, setShowSearch] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [scrolled, setScrolled] = useState(false)
@@ -76,11 +77,12 @@ export function Header({ user }: HeaderProps) {
 
   return (
     <header
-      className={cn(
-        "fixed left-[280px] right-0 top-0 z-40 flex h-16 items-center border-b px-8 transition-all duration-300",
-        scrolled ? "glass border-transparent shadow-subtle" : "bg-transparent border-transparent",
-      )}
-    >
+    className={cn(
+      "fixed right-0 top-0 z-40 flex h-16 items-center border-b px-8 transition-all duration-300",
+      collapsed ? "left-[80px]" : "left-[280px]",  // Dynamic left position
+      scrolled ? "glass border-transparent shadow-subtle" : "bg-white border-transparent",
+    )}
+  >
       <div className="hidden md:flex md:flex-col">
         <h1 className="text-lg font-semibold">Accenture HR</h1>
         <p className="text-sm text-muted-foreground">

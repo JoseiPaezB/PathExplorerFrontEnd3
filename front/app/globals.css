@@ -79,7 +79,7 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+    font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
     letter-spacing: -0.01em;
   }
 
