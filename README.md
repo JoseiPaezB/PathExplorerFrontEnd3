@@ -31,3 +31,16 @@
 <img src="https://img.shields.io/badge/-PostgreSQL-lightblue?logo=postgresql" height="30" alt="postgrelogo">
   <img src="https://img.shields.io/badge/-Supabase-black?logo=supabase" height="30" alt="supabaselogo">
 </div>
+
+
+##Instruciones de descarga
+<div align="left">
+  <ul>
+    <li>Hacer pull desde github</li>
+    <li>cd nombre-carpeta-del-proyecto</li>
+    <li>npm install</li>
+    <li>npm run build --force (hay varias librerias extras, por eso se fuerza la compilacion)</li>
+    <li>npm run dev</li>
+  </ul>
+</div>
+
