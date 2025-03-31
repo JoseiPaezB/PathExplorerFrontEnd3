@@ -33,7 +33,7 @@
 </div>
 
 
-##Instruciones de descarga
+## Instruciones de descarga
 <div align="left">
   <ul>
     <li>Hacer pull desde github</li>
