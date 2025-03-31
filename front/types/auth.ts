@@ -1,17 +1,46 @@
-export type UserRole = "employee" | "manager" | "administrator"
+export type UserRole = "administrator" | "manager" | "employee";
+
+export interface UserProfile {
+  id_perfil: number;
+  id_persona: number;
+  puesto_actual: string;
+  antiguedad: number;
+  historial_profesional: string;
+  ultima_actualizacion: string;
+}
+
+export interface RoleData {
+  id_administrador?: number;
+  id_manager?: number;
+  id_empleado?: number;
+  id_persona: number;
+  nivel_acceso?: number;
+  departamento?: string;
+  area_responsabilidad?: string;
+  nivel_autorizacion?: number;
+  estado?: string;
+  porcentaje_disponibilidad?: number;
+}
 
 export interface User {
-  id: string
-  email: string
-  name: string
-  role: UserRole
-  avatar?: string
-  position: string
-  department: string
+  id_persona: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  fecha_contratacion: string;
+  role: UserRole;
+  roleData: RoleData;
+  profile: UserProfile;
 }
 
 export interface AuthState {
-  user: User | null
-  isAuthenticated: boolean
+  user: User | null;
+  isAuthenticated: boolean;
 }
 
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  token: string;
+  user: User;
+}

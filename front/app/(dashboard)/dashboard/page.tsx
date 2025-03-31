@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   Award,
   BarChart3,
@@ -18,42 +18,54 @@ import {
   ChevronRight,
   CheckCircle,
   InfoIcon,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import DropdownCard from "@/components/ui/dropdown"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useAuth } from "@/contexts/auth-context"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import DropdownCard from "@/components/ui/dropdown";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function DashboardPage() {
-  const [asignacionValue] = useState(10)
-  const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("activos")
-  const shouldReduceMotion = useReducedMotion()
-  const { user } = useAuth()
-  const [openDropdownIndex, setOpenDropdownIndex] = useState(0);  // El primer dropdown se abrirá por defecto
+  const [asignacionValue] = useState(10);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("activos");
+  const shouldReduceMotion = useReducedMotion();
+  const { user } = useAuth();
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(0); // El primer dropdown se abrirá por defecto
 
   const handleDropdownToggle = (index: number) => {
     // Si el dropdown ya está abierto, lo cierra; si no, lo abre
     if (openDropdownIndex === index) {
-      setOpenDropdownIndex(-1);  // Cierra el dropdown
+      setOpenDropdownIndex(-1); // Cierra el dropdown
     } else {
-      setOpenDropdownIndex(index);  // Abre el dropdown correspondiente
+      setOpenDropdownIndex(index); // Abre el dropdown correspondiente
     }
-  }
+  };
 
   // Simulate loading state
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 800)
-    return () => clearTimeout(timer)
-  }, [])
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const container = {
     hidden: { opacity: 0 },
@@ -64,7 +76,7 @@ export default function DashboardPage() {
         delayChildren: 0.1,
       },
     },
-  }
+  };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
@@ -77,7 +89,7 @@ export default function DashboardPage() {
         damping: 20,
       },
     },
-  }
+  };
 
   // Shimmer loading effect for cards
   const ShimmerCard = () => (
@@ -91,7 +103,7 @@ export default function DashboardPage() {
         <div className="h-4 w-full rounded-md bg-muted/70 animate-pulse" />
       </div>
     </div>
-  )
+  );
 
   if (isLoading) {
     return (
@@ -114,205 +126,322 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <motion.div className="space-y-8" variants={container} initial="hidden" animate="show">
+    <motion.div
+      className="space-y-8"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       <motion.div variants={item} className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Bienvenido, {user?.name.split(" ")[0]}</h1>
-        <p className="text-muted-foreground">Aquí tienes un resumen de tu actividad y proyectos actuales</p>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Bienvenido, {user?.name}
+        </h1>
+        <p className="text-muted-foreground">
+          Aquí tienes un resumen de tu actividad y proyectos actuales
+        </p>
       </motion.div>
 
-      <DropdownCard title="Gestión y Desempeño"   isOpen={openDropdownIndex === 0}  // El primer dropdown siempre está abierto por defecto
-        onToggle={() => handleDropdownToggle(0)} >
-      <motion.div variants={item} className="grid gap-6 md:grid-cols-3" >
-        <Card className="overflow-hidden border-none shadow-card hover:shadow-elevated transition-all duration-300">
-          <CardHeader className="bg-gradient-to-r from-primary/90 to-primary p-6 pb-14">
-            <CardTitle className="text-white">Asignación en Proyectos</CardTitle>
-            <CardDescription className="text-white/80">Porcentaje de tiempo asignado</CardDescription>
-          </CardHeader>
-          <CardContent className="p-6 pt-0 -mt-10">
-            <div className="flex items-center justify-center">
-              <div className="relative h-40 w-40 flex items-center justify-center">
-                <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
-                  <circle className="stroke-black/5 stroke-[8] fill-none" cx="50" cy="50" r="40" />
-                  <motion.circle
-                    className="stroke-[#C266FF]   stroke-[8] fill-none"
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    strokeDasharray="251.2"
-                    strokeDashoffset="251.2"
-                    strokeLinecap="round"
-                    initial={{ strokeDashoffset: 251.2 }}
-                    animate={{ strokeDashoffset: 251.2 - asignacionValue * 2.51 }}
-                    transition={{ duration: 1.5, ease: [0.34, 1.56, 0.64, 1] }}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <motion.div
-                    className="flex flex-col items-center justify-center bg-white rounded-full h-28 w-28 shadow-sm"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.5, duration: 0.5 }}
+      <DropdownCard
+        title="Gestión y Desempeño"
+        isOpen={openDropdownIndex === 0} // El primer dropdown siempre está abierto por defecto
+        onToggle={() => handleDropdownToggle(0)}
+      >
+        <motion.div variants={item} className="grid gap-6 md:grid-cols-3">
+          <Card className="overflow-hidden border-none shadow-card hover:shadow-elevated transition-all duration-300">
+            <CardHeader className="bg-gradient-to-r from-primary/90 to-primary p-6 pb-14">
+              <CardTitle className="text-white">
+                Asignación en Proyectos
+              </CardTitle>
+              <CardDescription className="text-white/80">
+                Porcentaje de tiempo asignado
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 pt-0 -mt-10">
+              <div className="flex items-center justify-center">
+                <div className="relative h-40 w-40 flex items-center justify-center">
+                  <svg
+                    className="h-full w-full -rotate-90"
+                    viewBox="0 0 100 100"
                   >
-                    <motion.span
-                      className="text-3xl font-bold"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.8, duration: 0.5 }}
-                    >
-                      {asignacionValue}%
-                    </motion.span>
-                    <span className="text-sm text-muted-foreground">Asignado</span>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="justify-between border-t px-6 py-4">
-            <div className="text-xs text-muted-foreground">Último proyecto: Sistema CRM</div>
-            <Button variant="ghost" size="sm" className="gap-1 text-xs text-primary group">
-              <FileText className="h-3.5 w-3.5" />
-              <span>Ver detalles</span>
-              <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-            </Button>
-          </CardFooter>
-        </Card>
-
-        <Card className="overflow-hidden border-none shadow-card hover:shadow-elevated transition-all duration-300">
-          <CardHeader className="p-6">
-            <div className="flex justify-between items-center">
-              <CardTitle>Certificaciones</CardTitle>
-              <Award className="h-5 w-5 text-primary" />
-            </div>
-            <CardDescription>Estado de tus certificaciones activas</CardDescription>
-          </CardHeader>
-          <CardContent className="px-6 pb-2">
-            <div className="space-y-2">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-small">AWS Solutions Architect</span>
-                    <Badge className="bg-amber-500 text-white mr-1">30 días</Badge>
-                  </div>
-                </div>
-                <span className="text-xs text-muted-foreground gap-3">Vence: 15/04/2025</span>
-
-                <Progress value={25} className="h-1 bg-muted" indicatorClassName="bg-amber-500" showAnimation={true} />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-               <span className="text-sm font-medium block text-center">Scrum Master</span>
-               <Badge className="bg-emerald-500 text-white mr-2 flex items-center">60 días</Badge>
-               </div>
-
-                </div>
-                <span className="text-xs text-muted-foreground">Vence: 10/05/2025</span>
-
-                <Progress
-                  value={50}
-                  className="h-1 bg-muted"
-                  indicatorClassName="bg-emerald-500"
-                  showAnimation={true}
-                  animationDuration={1.8}
-                />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">React Advanced</span>
-                    <Badge variant="outline" className="text-muted-foreground mr-2">
-                      120 días
-                    </Badge>
-                  </div>
-                </div>
-                <span className="text-xs text-muted-foreground">Vence: 22/08/2025</span>
-
-                <Progress value={75} className="h-1" showAnimation={true} animationDuration={2} />
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="justify-between border-t px-6 py-4">
-            <div className="text-xs text-muted-foreground">3 certificaciones activas</div>
-            <Button variant="ghost" size="sm" className="gap-1 text-xs text-primary group">
-              <BookOpen className="h-3.5 w-3.5" />
-              <span>Ver todas</span>
-              <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-            </Button>
-          </CardFooter>
-        </Card>
-
-        <Card className="overflow-hidden border-none shadow-card hover:shadow-elevated transition-all duration-300">
-          <CardHeader className="p-6">
-            <div className="flex justify-between items-center">
-              <CardTitle>Métricas Clave</CardTitle>
-              <BarChart3 className="h-5 w-5 text-primary" />
-            </div>
-            <CardDescription>Resumen de tu rendimiento</CardDescription>
-          </CardHeader>
-          <CardContent className="px-6 pb-2">
-            <div className="space-y-4">
-              {[
-                { label: "Horas Facturables", value: "160h", target: "200h", percent: 80, trend: "up" },
-                { label: "Objetivos Completados", value: "7/10", target: "10", percent: 70, trend: "neutral" },
-                { label: "Satisfacción del Cliente", value: "4.8/5", target: "4.5/5", percent: 96, trend: "up" },
-              ].map((metric, index) => (
-                <div key={index} className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{metric.label}</span>
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-bold">{metric.value}</span>
-                      {metric.trend === "up" ? (
-                        <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
-                      ) : metric.trend === "down" ? (
-                        <TrendingDown className="h-3.5 w-3.5 text-red-500" />
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <Progress
-                      value={metric.percent}
-                      className="h-2"
-                      showAnimation={true}
-                      animationDuration={1.5 + index * 0.2}
+                    <circle
+                      className="stroke-black/5 stroke-[8] fill-none"
+                      cx="50"
+                      cy="50"
+                      r="40"
                     />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Meta: {metric.target}</span>
-                      <span>{metric.percent}%</span>
-                    </div>
+                    <motion.circle
+                      className="stroke-[#C266FF]   stroke-[8] fill-none"
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      strokeDasharray="251.2"
+                      strokeDashoffset="251.2"
+                      strokeLinecap="round"
+                      initial={{ strokeDashoffset: 251.2 }}
+                      animate={{
+                        strokeDashoffset: 251.2 - asignacionValue * 2.51,
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        ease: [0.34, 1.56, 0.64, 1],
+                      }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <motion.div
+                      className="flex flex-col items-center justify-center bg-white rounded-full h-28 w-28 shadow-sm"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.5, duration: 0.5 }}
+                    >
+                      <motion.span
+                        className="text-3xl font-bold"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8, duration: 0.5 }}
+                      >
+                        {asignacionValue}%
+                      </motion.span>
+                      <span className="text-sm text-muted-foreground">
+                        Asignado
+                      </span>
+                    </motion.div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-          <CardFooter className="justify-between border-t px-6 py-4">
-            <div className="text-xs text-muted-foreground">Último trimestre</div>
-            <Button variant="ghost" size="sm" className="gap-1 text-xs text-primary group">
-              <BarChart3 className="h-3.5 w-3.5" />
-              <span>Ver informe completo</span>
-              <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-            </Button>
-          </CardFooter>
-        </Card>
-      </motion.div>
+              </div>
+            </CardContent>
+            <CardFooter className="justify-between border-t px-6 py-4">
+              <div className="text-xs text-muted-foreground">
+                Último proyecto: Sistema CRM
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1 text-xs text-primary group"
+              >
+                <FileText className="h-3.5 w-3.5" />
+                <span>Ver detalles</span>
+                <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+              </Button>
+            </CardFooter>
+          </Card>
+
+          <Card className="overflow-hidden border-none shadow-card hover:shadow-elevated transition-all duration-300">
+            <CardHeader className="p-6">
+              <div className="flex justify-between items-center">
+                <CardTitle>Certificaciones</CardTitle>
+                <Award className="h-5 w-5 text-primary" />
+              </div>
+              <CardDescription>
+                Estado de tus certificaciones activas
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pb-2">
+              <div className="space-y-2">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-small">
+                        AWS Solutions Architect
+                      </span>
+                      <Badge className="bg-amber-500 text-white mr-1">
+                        30 días
+                      </Badge>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground gap-3">
+                    Vence: 15/04/2025
+                  </span>
+
+                  <Progress
+                    value={25}
+                    className="h-1 bg-muted"
+                    indicatorClassName="bg-amber-500"
+                    showAnimation={true}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium block text-center">
+                        Scrum Master
+                      </span>
+                      <Badge className="bg-emerald-500 text-white mr-2 flex items-center">
+                        60 días
+                      </Badge>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    Vence: 10/05/2025
+                  </span>
+
+                  <Progress
+                    value={50}
+                    className="h-1 bg-muted"
+                    indicatorClassName="bg-emerald-500"
+                    showAnimation={true}
+                    animationDuration={1.8}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">
+                        React Advanced
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className="text-muted-foreground mr-2"
+                      >
+                        120 días
+                      </Badge>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    Vence: 22/08/2025
+                  </span>
+
+                  <Progress
+                    value={75}
+                    className="h-1"
+                    showAnimation={true}
+                    animationDuration={2}
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="justify-between border-t px-6 py-4">
+              <div className="text-xs text-muted-foreground">
+                3 certificaciones activas
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1 text-xs text-primary group"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                <span>Ver todas</span>
+                <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+              </Button>
+            </CardFooter>
+          </Card>
+
+          <Card className="overflow-hidden border-none shadow-card hover:shadow-elevated transition-all duration-300">
+            <CardHeader className="p-6">
+              <div className="flex justify-between items-center">
+                <CardTitle>Métricas Clave</CardTitle>
+                <BarChart3 className="h-5 w-5 text-primary" />
+              </div>
+              <CardDescription>Resumen de tu rendimiento</CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pb-2">
+              <div className="space-y-4">
+                {[
+                  {
+                    label: "Horas Facturables",
+                    value: "160h",
+                    target: "200h",
+                    percent: 80,
+                    trend: "up",
+                  },
+                  {
+                    label: "Objetivos Completados",
+                    value: "7/10",
+                    target: "10",
+                    percent: 70,
+                    trend: "neutral",
+                  },
+                  {
+                    label: "Satisfacción del Cliente",
+                    value: "4.8/5",
+                    target: "4.5/5",
+                    percent: 96,
+                    trend: "up",
+                  },
+                ].map((metric, index) => (
+                  <div key={index} className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">
+                        {metric.label}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm font-bold">
+                          {metric.value}
+                        </span>
+                        {metric.trend === "up" ? (
+                          <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+                        ) : metric.trend === "down" ? (
+                          <TrendingDown className="h-3.5 w-3.5 text-red-500" />
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Progress
+                        value={metric.percent}
+                        className="h-2"
+                        showAnimation={true}
+                        animationDuration={1.5 + index * 0.2}
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Meta: {metric.target}</span>
+                        <span>{metric.percent}%</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+            <CardFooter className="justify-between border-t px-6 py-4">
+              <div className="text-xs text-muted-foreground">
+                Último trimestre
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1 text-xs text-primary group"
+              >
+                <BarChart3 className="h-3.5 w-3.5" />
+                <span>Ver informe completo</span>
+                <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+              </Button>
+            </CardFooter>
+          </Card>
+        </motion.div>
       </DropdownCard>
 
-      <DropdownCard title="Actividad y progreso de proyectos"  isOpen={openDropdownIndex === 1}  // El segundo dropdown se controla por estado
-        onToggle={() => handleDropdownToggle(1)} >
-      <motion.div variants={item}>
-      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+      <DropdownCard
+        title="Actividad y progreso de proyectos"
+        isOpen={openDropdownIndex === 1} // El segundo dropdown se controla por estado
+        onToggle={() => handleDropdownToggle(1)}
+      >
+        <motion.div variants={item}>
+          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full sm:w-auto"
+            >
               <TabsList className="bg-muted/50 p-1 rounded-full">
-                <TabsTrigger value="activos" className="rounded-full px-4 text-sm">
+                <TabsTrigger
+                  value="activos"
+                  className="rounded-full px-4 text-sm"
+                >
                   Proyectos Activos
                 </TabsTrigger>
-                <TabsTrigger value="proximos" className="rounded-full px-4 text-sm">
+                <TabsTrigger
+                  value="proximos"
+                  className="rounded-full px-4 text-sm"
+                >
                   Próximos
                 </TabsTrigger>
-                <TabsTrigger value="completados" className="rounded-full px-4 text-sm">
+                <TabsTrigger
+                  value="completados"
+                  className="rounded-full px-4 text-sm"
+                >
                   Completados
                 </TabsTrigger>
               </TabsList>
@@ -337,7 +466,8 @@ export default function DashboardPage() {
                   {[
                     {
                       title: "Sistema CRM",
-                      description: "Desarrollo de módulos de ventas y marketing",
+                      description:
+                        "Desarrollo de módulos de ventas y marketing",
                       progress: 65,
                       role: "Desarrollador Frontend",
                       dueDate: "15/05/2025",
@@ -387,18 +517,28 @@ export default function DashboardPage() {
                                   {project.status}
                                 </Badge>
                               </div>
-                              <CardDescription className="mt-1">{project.description}</CardDescription>
+                              <CardDescription className="mt-1">
+                                {project.description}
+                              </CardDescription>
                             </div>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 rounded-full"
+                                >
                                   <MoreHorizontal className="h-4 w-4" />
                                   <span className="sr-only">Opciones</span>
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-40">
-                                <DropdownMenuItem>Ver detalles</DropdownMenuItem>
-                                <DropdownMenuItem>Editar proyecto</DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  Ver detalles
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  Editar proyecto
+                                </DropdownMenuItem>
                                 <DropdownMenuItem>Ver equipo</DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -409,7 +549,9 @@ export default function DashboardPage() {
                             <div className="space-y-2">
                               <div className="flex items-center justify-between text-sm">
                                 <span>Progreso</span>
-                                <span className="font-medium">{project.progress}%</span>
+                                <span className="font-medium">
+                                  {project.progress}%
+                                </span>
                               </div>
                               <Progress
                                 value={project.progress}
@@ -420,11 +562,15 @@ export default function DashboardPage() {
                             </div>
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div className="space-y-1">
-                                <span className="text-xs text-muted-foreground">Rol</span>
+                                <span className="text-xs text-muted-foreground">
+                                  Rol
+                                </span>
                                 <p className="font-medium">{project.role}</p>
                               </div>
                               <div className="space-y-1">
-                                <span className="text-xs text-muted-foreground">Fecha límite</span>
+                                <span className="text-xs text-muted-foreground">
+                                  Fecha límite
+                                </span>
                                 <p className="font-medium">{project.dueDate}</p>
                               </div>
                             </div>
@@ -435,7 +581,11 @@ export default function DashboardPage() {
                             <Users className="h-3.5 w-3.5" />
                             <span>Equipo: {project.team} personas</span>
                           </div>
-                          <Button variant="ghost" size="sm" className="gap-1 text-xs text-primary group">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="gap-1 text-xs text-primary group"
+                          >
                             <Calendar className="h-3.5 w-3.5" />
                             <span>Ver calendario</span>
                             <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
@@ -450,10 +600,13 @@ export default function DashboardPage() {
                 <div className="flex h-60 items-center justify-center rounded-xl border border-dashed bg-muted/30">
                   <div className="flex flex-col items-center gap-2 text-center">
                     <Calendar className="h-12 w-12 text-muted-foreground/50" />
-                    <h3 className="text-lg font-medium">No hay proyectos próximos</h3>
+                    <h3 className="text-lg font-medium">
+                      No hay proyectos próximos
+                    </h3>
                     <p className="text-sm text-muted-foreground max-w-md">
-                      Los proyectos próximos aparecerán aquí cuando estén programados. Puedes crear un nuevo proyecto
-                      desde el panel de administración.
+                      Los proyectos próximos aparecerán aquí cuando estén
+                      programados. Puedes crear un nuevo proyecto desde el panel
+                      de administración.
                     </p>
                     <Button variant="outline" className="mt-2 rounded-full">
                       Crear proyecto
@@ -472,15 +625,26 @@ export default function DashboardPage() {
                       team: 6,
                     },
                   ].map((project, index) => (
-                    <motion.div key={project.title} variants={item} custom={index} initial="hidden" animate="show">
+                    <motion.div
+                      key={project.title}
+                      variants={item}
+                      custom={index}
+                      initial="hidden"
+                      animate="show"
+                    >
                       <Card className="overflow-hidden border-none shadow-card bg-muted/30">
                         <CardHeader className="pb-2 p-6">
                           <div className="flex items-start justify-between">
                             <div>
                               <CardTitle>{project.title}</CardTitle>
-                              <CardDescription className="mt-1">{project.description}</CardDescription>
+                              <CardDescription className="mt-1">
+                                {project.description}
+                              </CardDescription>
                             </div>
-                            <Badge variant="outline" className="bg-muted text-muted-foreground">
+                            <Badge
+                              variant="outline"
+                              className="bg-muted text-muted-foreground"
+                            >
                               Completado
                             </Badge>
                           </div>
@@ -496,12 +660,18 @@ export default function DashboardPage() {
                             </div>
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div className="space-y-1">
-                                <span className="text-xs text-muted-foreground">Rol</span>
+                                <span className="text-xs text-muted-foreground">
+                                  Rol
+                                </span>
                                 <p className="font-medium">{project.role}</p>
                               </div>
                               <div className="space-y-1">
-                                <span className="text-xs text-muted-foreground">Fecha completado</span>
-                                <p className="font-medium">{project.completedDate}</p>
+                                <span className="text-xs text-muted-foreground">
+                                  Fecha completado
+                                </span>
+                                <p className="font-medium">
+                                  {project.completedDate}
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -511,7 +681,11 @@ export default function DashboardPage() {
                             <Users className="h-3.5 w-3.5" />
                             <span>Equipo: {project.team} personas</span>
                           </div>
-                          <Button variant="ghost" size="sm" className="gap-1 text-xs text-primary group">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="gap-1 text-xs text-primary group"
+                          >
                             <FileText className="h-3.5 w-3.5" />
                             <span>Ver informe</span>
                             <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
@@ -527,9 +701,11 @@ export default function DashboardPage() {
         </motion.div>
       </DropdownCard>
 
-      
-      <DropdownCard title="Colaboración y Avances"  isOpen={openDropdownIndex === 2}  // El segundo dropdown se controla por estado
-        onToggle={() => handleDropdownToggle(2)} >
+      <DropdownCard
+        title="Colaboración y Avances"
+        isOpen={openDropdownIndex === 2} // El segundo dropdown se controla por estado
+        onToggle={() => handleDropdownToggle(2)}
+      >
         <motion.div variants={item} className="grid gap-6 md:grid-cols-2">
           <Card className="overflow-hidden border-none shadow-card hover:shadow-elevated transition-all duration-300">
             <CardHeader className="p-6">
@@ -540,7 +716,8 @@ export default function DashboardPage() {
                 {[
                   {
                     title: "Certificación completada",
-                    description: "Has completado la certificación de React Avanzado",
+                    description:
+                      "Has completado la certificación de React Avanzado",
                     time: "Hace 2 días",
                     icon: Award,
                     color: "text-amber-600",
@@ -548,7 +725,8 @@ export default function DashboardPage() {
                   },
                   {
                     title: "Nuevo proyecto asignado",
-                    description: "Has sido asignado al proyecto Portal de Clientes",
+                    description:
+                      "Has sido asignado al proyecto Portal de Clientes",
                     time: "Hace 1 semana",
                     icon: Briefcase,
                     color: "text-blue-600",
@@ -556,7 +734,8 @@ export default function DashboardPage() {
                   },
                   {
                     title: "Evaluación de desempeño",
-                    description: "Tu manager ha completado tu evaluación trimestral",
+                    description:
+                      "Tu manager ha completado tu evaluación trimestral",
                     time: "Hace 2 semanas",
                     icon: FileText,
                     color: "text-green-600",
@@ -564,7 +743,8 @@ export default function DashboardPage() {
                   },
                   {
                     title: "Curso recomendado",
-                    description: "Se te ha recomendado el curso de AWS Solutions Architect",
+                    description:
+                      "Se te ha recomendado el curso de AWS Solutions Architect",
                     time: "Hace 3 semanas",
                     icon: BookOpen,
                     color: "text-purple-600",
@@ -582,21 +762,29 @@ export default function DashboardPage() {
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   >
-                    <div className={`mt-0.5 rounded-full py-4 px-3 flex items-center justify-center ${activity.color}`}>
-                    {activity.type === "success" ? (
-                      <CheckCircle className="h-5 w-5" />
-                    ) : activity.type === "info" ? (
-                      <InfoIcon className="h-5 w-5" />
-                    ) : (
-                      <activity.icon className="h-5 w-5" />
-                    )}
-                  </div>
+                    <div
+                      className={`mt-0.5 rounded-full py-4 px-3 flex items-center justify-center ${activity.color}`}
+                    >
+                      {activity.type === "success" ? (
+                        <CheckCircle className="h-5 w-5" />
+                      ) : activity.type === "info" ? (
+                        <InfoIcon className="h-5 w-5" />
+                      ) : (
+                        <activity.icon className="h-5 w-5" />
+                      )}
+                    </div>
                     <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">{activity.title}</p>
-                      <p className="text-sm text-muted-foreground">{activity.description}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {activity.title}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {activity.description}
+                      </p>
                       <div className="flex items-center pt-1">
                         <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{activity.time}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {activity.time}
+                        </span>
                       </div>
                     </div>
                   </motion.div>
@@ -604,7 +792,11 @@ export default function DashboardPage() {
               </div>
             </CardContent>
             <CardFooter className="border-t px-6 py-4">
-              <Button variant="ghost" size="sm" className="w-full gap-1 text-primary group">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full gap-1 text-primary group"
+              >
                 <span>Ver toda la actividad</span>
                 <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
               </Button>
@@ -623,25 +815,29 @@ export default function DashboardPage() {
                   {
                     name: "Juan Díaz",
                     role: "Project Manager",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Juan",
+                    avatar:
+                      "https://api.dicebear.com/7.x/avataaars/svg?seed=Juan",
                     status: "online",
                   },
                   {
                     name: "María López",
                     role: "Backend Developer",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
+                    avatar:
+                      "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
                     status: "offline",
                   },
                   {
                     name: "Carlos Ruiz",
                     role: "UX Designer",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos",
+                    avatar:
+                      "https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos",
                     status: "online",
                   },
                   {
                     name: "Ana García",
                     role: "Frontend Developer",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ana",
+                    avatar:
+                      "https://api.dicebear.com/7.x/avataaars/svg?seed=Ana",
                     status: "online",
                   },
                 ].map((member, index) => (
@@ -668,15 +864,25 @@ export default function DashboardPage() {
                           </AvatarFallback>
                         </Avatar>
                         <div
-                          className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${member.status === "online" ? "bg-green-500" : "bg-gray-300"}`}
+                          className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${
+                            member.status === "online"
+                              ? "bg-green-500"
+                              : "bg-gray-300"
+                          }`}
                         />
                       </div>
                       <div>
                         <p className="text-sm font-medium">{member.name}</p>
-                        <p className="text-xs text-muted-foreground">{member.role}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {member.role}
+                        </p>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 rounded-full p-0"
+                    >
                       <Mail className="h-4 w-4" />
                       <span className="sr-only">Enviar mensaje</span>
                     </Button>
@@ -685,7 +891,11 @@ export default function DashboardPage() {
               </div>
             </CardContent>
             <CardFooter className="border-t px-6 py-4">
-              <Button variant="ghost" size="sm" className="w-full gap-1 text-primary group">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full gap-1 text-primary group"
+              >
                 <span>Ver todo el equipo</span>
                 <ChevronRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
               </Button>
@@ -694,6 +904,5 @@ export default function DashboardPage() {
         </motion.div>
       </DropdownCard>
     </motion.div>
-  )
+  );
 }
-
