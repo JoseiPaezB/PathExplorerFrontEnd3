@@ -20,7 +20,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd front
-          npm install
+          npm install --force
 
       - name: Run Tests
         run: |
