@@ -22,7 +22,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { useAuth } from "@/contexts/auth-context"
+import type { User as AuthUser } from "@/types/auth";
+import { useAuth } from "@/contexts/auth-context";
 
 interface SidebarProps {
   className?: string
@@ -36,6 +37,8 @@ export function Sidebar({ className, userRole, collapsed, setCollapsed }: Sideba
   const { logout } = useAuth()
   const shouldReduceMotion = useReducedMotion()
   const sidebarRef = useRef<HTMLDivElement>(null)
+  const { user } = useAuth() as { user: AuthUser | null };
+
 
   const baseItems = [
     { title: "Dashboard", href: "/dashboard", icon: Home },
@@ -135,7 +138,7 @@ export function Sidebar({ className, userRole, collapsed, setCollapsed }: Sideba
                   exit="collapsed"
                   className="ml-3 overflow-hidden"
                 >
-                  <p className="text-sm font-medium text-gray-900 truncate">Usuario Name</p>
+                  <p className="text-sm font-medium text-gray-900 truncate">{`${user?.nombre} ${user?.apellido}`}</p>
                   <p className="text-xs text-gray-500 truncate capitalize">{userRole}</p>
                 </motion.div>
               )}

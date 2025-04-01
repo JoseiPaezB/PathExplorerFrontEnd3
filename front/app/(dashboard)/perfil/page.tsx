@@ -21,8 +21,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import type { User as AuthUser } from "@/types/auth";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function PerfilPage() {
+  const { user } = useAuth() as { user: AuthUser | null };
   const [activeTab, setActiveTab] = useState("informacion")
 
   return (
@@ -36,14 +39,14 @@ export default function PerfilPage() {
             </Avatar>
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold">Juan Díaz</h2>
+                <h2 className="text-2xl font-bold">{`${user?.nombre} ${user?.apellido}`}</h2>
                 <Badge className="bg-primary">Senior</Badge>
               </div>
-              <p className="text-lg text-muted-foreground">Desarrollador Full Stack</p>
+              <p className="text-lg text-muted-foreground">{`${user?.profile.puesto_actual}`}</p>
               <div className="flex flex-wrap gap-3 pt-1">
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Briefcase className="h-4 w-4" />
-                  <span>Departamento de Tecnología</span>
+                  <span>{`${user?.roleData.area_responsabilidad}`}</span>
                 </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
@@ -51,7 +54,12 @@ export default function PerfilPage() {
                 </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4" />
-                  <span>Incorporación: Enero 2020</span>
+                  <span> {user?.fecha_contratacion &&
+                new Date(user.fecha_contratacion).toLocaleDateString("es-ES", {
+                  year: "numeric",
+                  month: "long",
+                  day: "2-digit",
+                })}</span>
                 </div>
               </div>
             </div>
@@ -90,7 +98,7 @@ export default function PerfilPage() {
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-medium">Email:</span>
-                    <span className="text-sm">juan.diaz@empresa.com</span>
+                    <span className="text-sm">{`${user?.email}`}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 text-muted-foreground" />

@@ -35,7 +35,7 @@ export function middleware(request: NextRequest) {
     const role = userData?.role
 
     // Rutas solo para administradores
-    if (path.startsWith("/admin") && role !== "administrator") {
+    if (path.startsWith("/admin") && role !== "administrador") {
       return NextResponse.redirect(new URL("/dashboard", request.url))
     }
 

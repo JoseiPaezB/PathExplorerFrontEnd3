@@ -64,9 +64,9 @@ export function Header({ user, collapsed }: HeaderProps) {
   if (!user) return null;
 
   const roleLabels = {
-    employee: "Empleado",
+    empleado: "Empleado",
     manager: "Manager",
-    administrator: "Administrador",
+    administrador: "Administrador",
   };
 
   const formattedDate = new Intl.DateTimeFormat("es-ES", {

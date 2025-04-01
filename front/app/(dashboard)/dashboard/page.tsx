@@ -138,7 +138,7 @@ export default function DashboardPage() {
     >
       <motion.div variants={item} className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">
-          Bienvenido, {user?.name}
+          Bienvenido, {user?.nombre}
         </h1>
         <p className="text-muted-foreground">
           Aquí tienes un resumen de tu actividad y proyectos actuales
