@@ -4,9 +4,9 @@ import  React from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Lock, Mail, ArrowRight, CheckCircle } from "lucide-react"
+import { Lock, Mail, ArrowRight, CheckCircle, AlertCircle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState("")
   const [backgroundPosition, setBackgroundPosition] = useState({ x: 0, y: 0 })
   const [isRedirecting, setIsRedirecting] = useState(false)
   const router = useRouter()
@@ -28,7 +29,7 @@ export default function LoginPage() {
   // Verificar si el usuario ya está autenticado
   useEffect(() => {
     if (isAuthenticated && user && !isLoggingOut && !isRedirecting) {
-      console.log("Usuario ya autenticado, redirigiendo a dashboard")
+      //console.log("Usuario ya autenticado, redirigiendo a dashboard")
       setIsRedirecting(true)
       setTimeout(() => {
         router.push("/dashboard")
@@ -60,11 +61,12 @@ export default function LoginPage() {
     if (isLoading || isRedirecting) return
 
     setIsLoading(true)
+    setError("")
 
     try {
-      console.log("Intentando iniciar sesión con:", email)
+      //console.log("Intentando iniciar sesión con:", email)
       await login(email, password)
-      console.log("Login exitoso")
+      //console.log("Login exitoso")
       setSuccess(true)
 
       toast({
@@ -78,12 +80,8 @@ export default function LoginPage() {
         router.push("/dashboard")
       }, 1200)
     } catch (error) {
-      console.error("Error de inicio de sesión:", error)
-      toast({
-        variant: "destructive",
-        title: "Error de inicio de sesión",
-        description: "Por favor, verifica tus credenciales e intenta nuevamente.",
-      })
+      //console.error("Error de inicio de sesión:", error)
+      setError("Por favor, verifica tus credenciales e intenta nuevamente")
       setIsLoading(false)
       setIsRedirecting(false)
     }
@@ -206,6 +204,23 @@ export default function LoginPage() {
                         initial="hidden"
                         animate="visible"
                     >
+                       <AnimatePresence>
+                        {error && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Alert variant="destructive" className="mb-4">
+                              <AlertCircle className="h-4 w-4 mr-2" />
+                              <AlertDescription>
+                                {error}
+                              </AlertDescription>
+                            </Alert>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                       <motion.div className="space-y-2" variants={itemVariants}>
                         <Label htmlFor="email" className="text-sm font-medium">
                           Correo electrónico
