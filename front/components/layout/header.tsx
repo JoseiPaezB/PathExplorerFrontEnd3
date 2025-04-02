@@ -16,6 +16,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { User as AuthUser } from "@/types/auth";
 import { useAuth } from "@/contexts/auth-context";
+import PerfilPage from "@/app/(dashboard)/perfil/page";
 
 interface HeaderProps {
   user: AuthUser | null;
@@ -37,6 +40,7 @@ interface HeaderProps {
 }
 
 export function Header({ user, collapsed }: HeaderProps) {
+  
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
@@ -86,6 +90,7 @@ export function Header({ user, collapsed }: HeaderProps) {
     setTheme(newTheme);
     document.documentElement.classList.toggle("dark");
   };
+  const router = useRouter();
 
   return (
     <header
@@ -278,11 +283,11 @@ export function Header({ user, collapsed }: HeaderProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/perfil")}>
               <User className="mr-2 h-4 w-4" />
               <span>Perfil</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/configuracion")}>
               <Settings className="mr-2 h-4 w-4" />
               <span>Configuración</span>
             </DropdownMenuItem>
