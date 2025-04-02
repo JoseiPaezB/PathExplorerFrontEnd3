@@ -1,5 +1,12 @@
-// front/src/App.test.js
-test('example test', () => {
-    expect(1 + 1).toBe(2);
+// test/App.test.js
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import App from '../app/App';
+
+describe('Carga inicial del componente App', () => {
+  test('renderiza un texto esperado en pantalla', () => {
+    render(<App />);
+    const texto = screen.getByText(/bienvenido/i); // Ajusta esto según tu App
+    expect(texto).toBeInTheDocument();
   });
-  
+});
