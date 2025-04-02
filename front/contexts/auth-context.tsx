@@ -72,8 +72,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(
     async (email: string, password: string): Promise<User | void> => {
       try {
-        console.log(`Attempting login with email: ${email}`);
-
         const response = await axios.post<LoginResponse>(
           `${API_URL}/auth/login`,
           {
@@ -81,8 +79,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             password,
           }
         );
-
-        console.log("Login response status:", response.status);
 
         if (
           response.data.success &&
@@ -102,30 +98,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             isAuthenticated: true,
           });
 
-          console.log("Login successful, user info:", user);
-
           return user;
         } else {
-          console.error("Invalid response format:", response.data);
-          throw new Error(response.data.message || "Invalid credentials");
+          throw new Error(response.data.message || "Credenciales inválidas");
         }
       } catch (error) {
-        console.error("Login error:", error);
-
         if (axios.isAxiosError(error)) {
-          if (error.response) {
-            console.error(
-              "Server error:",
-              error.response.status,
-              error.response.data
-            );
-          } else if (error.request) {
-            console.error("No response received:", error.request);
-          } else {
-            console.error("Request setup error:", error.message);
-          }
+          throw new Error("Autenticación fallida");
         }
-
         throw error;
       }
     },
