@@ -377,14 +377,14 @@ export default function AnaliticaPage() {
                   {[
                     {
                       name: "AWS Solutions Architect Professional",
-                      type: "Certificación",
+                      type: "Certifications",
                       status: "En progreso",
                       dueDate: "15/04/2025",
                       progress: 40,
                     },
                     {
                       name: "Scrum Master",
-                      type: "Certificación",
+                      type: "Certifications",
                       status: "Activa",
                       dueDate: "10/05/2025",
                       progress: 100,

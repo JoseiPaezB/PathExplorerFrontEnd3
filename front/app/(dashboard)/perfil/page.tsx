@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+
 import {
   Award,
   Briefcase,
@@ -23,10 +24,120 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import type { User as AuthUser } from "@/types/auth";
 import { useAuth } from "@/contexts/auth-context";
+import axios from "axios";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+
+type ProfessionalHistoryEntry = {
+  nombre: string;
+  apellido: string;
+  historial: string;
+  role: string;
+  achievements: string;
+};
+
+// Since we're now receiving an array from the backend
+type ProfessionalHistory = ProfessionalHistoryEntry[];
+
+type Certification = {
+  id_certificacion: number;
+  nombre: string;
+  institucion: string;
+  validez: number;
+  nivel?: number;
+};
+
 
 export default function PerfilPage() {
   const { user } = useAuth() as { user: AuthUser | null };
-  const [activeTab, setActiveTab] = useState("informacion")
+  const [activeTab, setActiveTab] = useState("informacion"); 
+  const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [professionalHistory, setProfessionalHistory] = useState<ProfessionalHistory | null>(null);
+
+  useEffect(() => {
+    const fetchProfessionalHistory = async () => {
+      try {
+        // Get the token
+        const token = localStorage.getItem("token");
+        
+        // Make the request to the new endpoint
+        const response = await axios.get(`${API_URL}/auth/professional-history`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (response.data.success) {
+          setProfessionalHistory(response.data.professionalHistory);
+        } else {
+          setError(response.data.message || "Error fetching professional history");
+        }
+      } catch (error) {
+        console.error("Error fetching professional history:", error);
+        if (axios.isAxiosError(error)) {
+          setError(`Error fetching professional history: ${error.response?.status} - ${error.response?.data?.message || error.message}`);
+        } else {
+          setError("An unknown error occurred while fetching professional history.");
+        }
+      }
+    };
+    
+    fetchProfessionalHistory();
+  }, []);
+
+  useEffect(() => {
+    const fetchCertifications = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Get the token
+        const token = localStorage.getItem("token");
+        
+        // Make the request using the correct URL
+        const response = await axios.get(`${API_URL}/auth/certifications`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (response.data.success) {
+          // Define an interface for the raw certification data from the backend
+          interface RawCertification {
+            ID_Certificacion: number;
+            Nombre: string;
+            Institucion: string;
+            Validez: number | string;
+            Nivel?: number | string;
+          }
+        
+          // Use the interface in the mapping function
+          const formattedCertifications = response.data.certifications.map((cert: RawCertification) => ({
+            id_certificacion: cert.ID_Certificacion,
+            nombre: cert.Nombre,
+            institucion: cert.Institucion,
+            validez: cert.Validez,
+            nivel: cert.Nivel,
+          }));
+        
+          setCertifications(formattedCertifications);
+        } else {
+          setError(response.data.message || "Error fetching certifications");
+        }
+      } catch (error) {
+        console.error("Error fetching certifications:", error);
+        if (axios.isAxiosError(error)) {
+          setError(`Error fetching certifications: ${error.response?.status} - ${error.response?.data?.message || error.message}`);
+        } else {
+          setError("An unknown error occurred while fetching certifications.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchCertifications();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -122,30 +233,24 @@ export default function PerfilPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="space-y-1">
+              <div className="space-y-3">
+              {certifications && certifications.length > 0 ? (
+                certifications.map((cert) => (
+                  <div key={cert.id_certificacion} className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium">Ingeniería Informática</h4>
-                      <span className="text-xs text-muted-foreground">2015 - 2019</span>
+                      <h4 className="text-sm font-medium">{cert.nombre}</h4>
+                      <span className="text-xs text-muted-foreground">{cert.validez}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Universidad Politécnica de Madrid</p>
+                    <p className="text-xs text-muted-foreground">{cert.institucion}</p>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium">AWS Solutions Architect</h4>
-                      <span className="text-xs text-muted-foreground">2022</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Amazon Web Services</p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium">Scrum Master Certified</h4>
-                      <span className="text-xs text-muted-foreground">2021</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Scrum Alliance</p>
-                  </div>
+                ))
+              ) : (
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">No hay certificaciones disponibles</p>
                 </div>
-              </CardContent>
+              )}
+              </div>
+            </CardContent>
             </Card>
           </div>
 
@@ -157,64 +262,36 @@ export default function PerfilPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                {[
-                  {
-                    role: "Desarrollador Full Stack Senior",
-                    company: "Empresa Actual",
-                    period: "Enero 2022 - Presente",
-                    description:
-                      "Desarrollo de aplicaciones web y móviles utilizando React, Node.js y AWS. Liderazgo técnico en proyectos de transformación digital para clientes del sector financiero.",
-                    achievements: [
-                      "Reducción del 40% en tiempo de carga de la aplicación principal",
-                      "Implementación de CI/CD que redujo el tiempo de despliegue en un 60%",
-                      "Mentoría a 5 desarrolladores junior",
-                    ],
-                  },
-                  {
-                    role: "Desarrollador Full Stack",
-                    company: "Empresa Anterior",
-                    period: "Marzo 2020 - Diciembre 2021",
-                    description:
-                      "Desarrollo de aplicaciones web utilizando Angular y .NET Core. Participación en proyectos de e-commerce y sistemas de gestión interna.",
-                    achievements: [
-                      "Migración exitosa de aplicación legacy a arquitectura moderna",
-                      "Implementación de sistema de autenticación OAuth 2.0",
-                    ],
-                  },
-                  {
-                    role: "Desarrollador Frontend",
-                    company: "Primera Empresa",
-                    period: "Julio 2019 - Febrero 2020",
-                    description:
-                      "Desarrollo de interfaces de usuario con HTML, CSS y JavaScript. Colaboración en proyectos de marketing digital.",
-                    achievements: ["Rediseño de la página principal que aumentó conversiones en un 25%"],
-                  },
-                ].map((job, index) => (
-                  <div key={index} className="relative border-l border-muted pl-6">
-                    <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
-                    <div className="space-y-2">
-                      <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-                        <h4 className="font-medium">{job.role}</h4>
-                        <span className="text-sm text-muted-foreground">{job.period}</span>
-                      </div>
-                      <p className="text-sm font-medium text-primary">{job.company}</p>
-                      <p className="text-sm text-muted-foreground">{job.description}</p>
-                      {job.achievements && job.achievements.length > 0 && (
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium">Logros destacados:</p>
-                          <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                            {job.achievements.map((achievement, i) => (
-                              <li key={i}>{achievement}</li>
-                            ))}
-                          </ul>
+                <div className="space-y-16"> {/* Increased spacing between entries */}
+                  {isLoading ? (
+                    <p>Cargando historial profesional...</p>
+                  ) : error ? (
+                    <p className="text-red-500">{error}</p>
+                  ) : professionalHistory && professionalHistory.length > 0 ? (
+                    professionalHistory.map((entry, index) => (
+                      <div key={index} className="relative border-l border-muted pl-6 pb-8"> {/* Added more bottom padding */}
+                        <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
+                        <div className="space-y-4"> {/* Increased internal spacing */}
+                          <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
+                            <h4 className="font-medium">{entry.role || "Posición no especificada"}</h4>
+                          </div>
+                          <p className="text-sm font-medium text-primary">{entry.nombre} {entry.apellido}</p>
+                          <p className="text-sm text-muted-foreground whitespace-pre-line">{entry.historial}</p>
+                          {entry.achievements && (
+                            <div className="space-y-3 mt-6"> {/* Increased spacing for achievements section */}
+                              <p className="text-sm font-medium">Logros destacados:</p>
+                              <p className="text-sm text-muted-foreground">{entry.achievements}</p>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No hay historial profesional disponible</p>
+                  )}
+                </div>
+              </CardContent>
+
           </Card>
         </TabsContent>
 

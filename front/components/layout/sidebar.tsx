@@ -46,7 +46,7 @@ export function Sidebar({ className, userRole, collapsed, setCollapsed }: Sideba
   ]
 
   const roleItems = {
-    employee: [
+    empleado: [
       { title: "Mi Proyecto", href: "/proyecto-actual", icon: Briefcase },
       { title: "Mis Cursos", href: "/cursos", icon: BookOpen },
       { title: "Mi Desempeño", href: "/analitica", icon: BarChart3 },
@@ -56,7 +56,7 @@ export function Sidebar({ className, userRole, collapsed, setCollapsed }: Sideba
       { title: "Equipo", href: "/equipo", icon: Users },
       { title: "Analítica", href: "/analitica", icon: BarChart3 },
     ],
-    administrator: [
+    administrador: [
       { title: "Gestión de Usuarios", href: "/usuarios", icon: Users },
       { title: "Autorizaciones", href: "/autorizaciones", icon: FileCheck },
       { title: "Departamentos", href: "/departamentos", icon: Building },

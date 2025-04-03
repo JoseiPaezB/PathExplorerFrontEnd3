@@ -80,7 +80,7 @@ export default function UsuariosPage() {
               {
                 name: "Ana García",
                 email: "ana.garcia@accenture.com",
-                role: "employee",
+                role: "empleado",
                 department: "Desarrollo",
                 status: "Activo",
                 avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ana",
@@ -88,7 +88,7 @@ export default function UsuariosPage() {
               {
                 name: "Carlos Rodriguez",
                 email: "carlos.rodriguez@accenture.com",
-                role: "administrator",
+                role: "administrador",
                 department: "IT",
                 status: "Activo",
                 avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos",
@@ -96,7 +96,7 @@ export default function UsuariosPage() {
               {
                 name: "María López",
                 email: "maria.lopez@accenture.com",
-                role: "employee",
+                role: "empleado",
                 department: "Diseño",
                 status: "Inactivo",
                 avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
