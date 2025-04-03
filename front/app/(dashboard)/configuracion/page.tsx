@@ -1,27 +1,123 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Bell, Globe, Key, Lock, Mail, Moon, Palette, Shield, Sun, User } from "lucide-react"
+import { useState } from "react";
+import {
+  Bell,
+  Globe,
+  Key,
+  Lock,
+  Mail,
+  Moon,
+  Palette,
+  Shield,
+  Sun,
+  User,
+} from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAuth } from "@/contexts/auth-context";
+
+interface FormState {
+  nombre: string;
+  apellido: string;
+  correo: string;
+  cargo: string;
+}
 
 export default function ConfiguracionPage() {
-  const [activeTab, setActiveTab] = useState("cuenta")
+  const { user, updateUserProfile } = useAuth();
+  const [activeTab, setActiveTab] = useState("cuenta");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formSuccess, setFormSuccess] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formState, setFormState] = useState<FormState>({
+    nombre: user?.nombre || "",
+    apellido: user?.apellido || "",
+    correo: user?.email || "",
+    cargo: user?.profile?.puesto_actual || "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFormError(null);
+
+    try {
+      const updatedUser = await updateUserProfile({
+        nombre: formState.nombre,
+        apellido: formState.apellido,
+        correo: formState.correo,
+        cargo: formState.cargo,
+      });
+
+      setFormSuccess(true);
+
+      setTimeout(() => {
+        setFormSuccess(false);
+      }, 3000);
+    } catch (error) {
+      setFormError(
+        error instanceof Error ? error.message : "Error al actualizar los datos"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getStatusMessage = () => {
+    if (formSuccess) {
+      return (
+        <p className="text-green-600 text-sm mt-2">
+          Cambios guardados correctamente
+        </p>
+      );
+    }
+    if (formError) {
+      return <p className="text-red-600 text-sm mt-2">{formError}</p>;
+    }
+    return null;
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Configuración</h1>
-        <p className="text-muted-foreground">Administra tus preferencias y configuración de cuenta</p>
+        <p className="text-muted-foreground">
+          Administra tus preferencias y configuración de cuenta
+        </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="cuenta">Cuenta</TabsTrigger>
           <TabsTrigger value="seguridad">Seguridad</TabsTrigger>
@@ -33,62 +129,71 @@ export default function ConfiguracionPage() {
           <Card>
             <CardHeader>
               <CardTitle>Información Personal</CardTitle>
-              <CardDescription>Actualiza tu información personal y detalles de contacto</CardDescription>
+              <CardDescription>
+                Actualiza tu información personal y detalles de contacto
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="nombre">Nombre</Label>
-                  <Input id="nombre" placeholder="Juan" defaultValue="Juan" />
+              <form onSubmit={handleEdit}>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="nombre">Nombre</Label>
+                    <Input
+                      id="nombre"
+                      placeholder="Juan"
+                      value={formState.nombre}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="apellido">Apellido</Label>
+                    <Input
+                      id="apellido"
+                      placeholder="Díaz"
+                      value={formState.apellido}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="correo">Correo electrónico</Label>
+                    <Input
+                      id="correo"
+                      type="email"
+                      placeholder="juan.diaz@empresa.com"
+                      value={formState.correo}
+                      onChange={handleInputChange}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="apellido">Apellido</Label>
-                  <Input id="apellido" placeholder="Díaz" defaultValue="Díaz" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Correo electrónico</Label>
+                <div className="space-y-2 mt-4">
+                  <Label htmlFor="cargo">Cargo</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="juan.diaz@empresa.com"
-                    defaultValue="juan.diaz@empresa.com"
+                    id="cargo"
+                    placeholder="Desarrollador Full Stack Senior"
+                    value={formState.cargo}
+                    onChange={handleInputChange}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="telefono">Teléfono</Label>
-                  <Input id="telefono" type="tel" placeholder="+34 612 345 678" defaultValue="+34 612 345 678" />
+                <div className="mt-4">
+                  <Button
+                    type="submit"
+                    className="bg-primary hover:bg-primary/90"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Guardando..." : "Guardar cambios"}
+                  </Button>
+                  {getStatusMessage()}
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cargo">Cargo</Label>
-                <Input
-                  id="cargo"
-                  placeholder="Desarrollador Full Stack Senior"
-                  defaultValue="Desarrollador Full Stack Senior"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="departamento">Departamento</Label>
-                <Select defaultValue="tecnologia">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un departamento" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="tecnologia">Tecnología</SelectItem>
-                    <SelectItem value="marketing">Marketing</SelectItem>
-                    <SelectItem value="ventas">Ventas</SelectItem>
-                    <SelectItem value="rrhh">Recursos Humanos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button className="bg-primary hover:bg-primary/90">Guardar cambios</Button>
+              </form>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
               <CardTitle>Preferencias de Idioma y Región</CardTitle>
-              <CardDescription>Configura el idioma y la zona horaria de tu cuenta</CardDescription>
+              <CardDescription>
+                Configura el idioma y la zona horaria de tu cuenta
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
@@ -113,10 +218,18 @@ export default function ConfiguracionPage() {
                       <SelectValue placeholder="Selecciona una zona horaria" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="europe-madrid">Europa/Madrid (UTC+1)</SelectItem>
-                      <SelectItem value="europe-london">Europa/Londres (UTC+0)</SelectItem>
-                      <SelectItem value="america-new_york">América/Nueva York (UTC-5)</SelectItem>
-                      <SelectItem value="asia-tokyo">Asia/Tokio (UTC+9)</SelectItem>
+                      <SelectItem value="europe-madrid">
+                        Europa/Madrid (UTC+1)
+                      </SelectItem>
+                      <SelectItem value="europe-london">
+                        Europa/Londres (UTC+0)
+                      </SelectItem>
+                      <SelectItem value="america-new_york">
+                        América/Nueva York (UTC-5)
+                      </SelectItem>
+                      <SelectItem value="asia-tokyo">
+                        Asia/Tokio (UTC+9)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -135,7 +248,9 @@ export default function ConfiguracionPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button className="bg-primary hover:bg-primary/90">Guardar preferencias</Button>
+              <Button className="bg-primary hover:bg-primary/90">
+                Guardar preferencias
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -144,7 +259,9 @@ export default function ConfiguracionPage() {
           <Card>
             <CardHeader>
               <CardTitle>Cambiar Contraseña</CardTitle>
-              <CardDescription>Actualiza tu contraseña para mantener tu cuenta segura</CardDescription>
+              <CardDescription>
+                Actualiza tu contraseña para mantener tu cuenta segura
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -156,7 +273,9 @@ export default function ConfiguracionPage() {
                 <Input id="new-password" type="password" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirmar nueva contraseña</Label>
+                <Label htmlFor="confirm-password">
+                  Confirmar nueva contraseña
+                </Label>
                 <Input id="confirm-password" type="password" />
               </div>
               <Button className="bg-primary hover:bg-primary/90">
@@ -169,20 +288,26 @@ export default function ConfiguracionPage() {
           <Card>
             <CardHeader>
               <CardTitle>Autenticación de Dos Factores</CardTitle>
-              <CardDescription>Añade una capa extra de seguridad a tu cuenta</CardDescription>
+              <CardDescription>
+                Añade una capa extra de seguridad a tu cuenta
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Autenticación 2FA</Label>
-                  <p className="text-sm text-muted-foreground">Protege tu cuenta con autenticación de dos factores</p>
+                  <p className="text-sm text-muted-foreground">
+                    Protege tu cuenta con autenticación de dos factores
+                  </p>
                 </div>
                 <Switch />
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Autenticación biométrica</Label>
-                  <p className="text-sm text-muted-foreground">Usa tu huella digital o reconocimiento facial</p>
+                  <p className="text-sm text-muted-foreground">
+                    Usa tu huella digital o reconocimiento facial
+                  </p>
                 </div>
                 <Switch />
               </div>
@@ -196,7 +321,9 @@ export default function ConfiguracionPage() {
           <Card>
             <CardHeader>
               <CardTitle>Sesiones Activas</CardTitle>
-              <CardDescription>Gestiona tus sesiones activas en diferentes dispositivos</CardDescription>
+              <CardDescription>
+                Gestiona tus sesiones activas en diferentes dispositivos
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
@@ -219,12 +346,17 @@ export default function ConfiguracionPage() {
                   isCurrentDevice: false,
                 },
               ].map((session, index) => (
-                <div key={index} className="flex items-center justify-between rounded-lg border p-4">
+                <div
+                  key={index}
+                  className="flex items-center justify-between rounded-lg border p-4"
+                >
                   <div className="space-y-1">
                     <p className="font-medium">
                       {session.device}
                       {session.isCurrentDevice && (
-                        <span className="ml-2 text-xs text-muted-foreground">(Dispositivo actual)</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          (Dispositivo actual)
+                        </span>
                       )}
                     </p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -249,35 +381,47 @@ export default function ConfiguracionPage() {
           <Card>
             <CardHeader>
               <CardTitle>Preferencias de Notificaciones</CardTitle>
-              <CardDescription>Configura cómo y cuándo quieres recibir notificaciones</CardDescription>
+              <CardDescription>
+                Configura cómo y cuándo quieres recibir notificaciones
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 <div>
-                  <h4 className="mb-3 font-medium">Notificaciones por correo</h4>
+                  <h4 className="mb-3 font-medium">
+                    Notificaciones por correo
+                  </h4>
                   <div className="space-y-4">
                     {[
                       {
                         title: "Actualizaciones de proyectos",
-                        description: "Recibe notificaciones cuando haya cambios en tus proyectos",
+                        description:
+                          "Recibe notificaciones cuando haya cambios en tus proyectos",
                       },
                       {
                         title: "Asignaciones de tareas",
-                        description: "Notificaciones cuando se te asignen nuevas tareas",
+                        description:
+                          "Notificaciones cuando se te asignen nuevas tareas",
                       },
                       {
                         title: "Menciones y comentarios",
-                        description: "Cuando alguien te mencione o comente en tus tareas",
+                        description:
+                          "Cuando alguien te mencione o comente en tus tareas",
                       },
                       {
                         title: "Recordatorios de deadlines",
                         description: "Recordatorios de fechas límite próximas",
                       },
                     ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between space-x-2">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between space-x-2"
+                      >
                         <div className="space-y-0.5">
                           <Label className="text-base">{item.title}</Label>
-                          <p className="text-sm text-muted-foreground">{item.description}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {item.description}
+                          </p>
                         </div>
                         <Switch />
                       </div>
@@ -301,10 +445,15 @@ export default function ConfiguracionPage() {
                         description: "Alertas de próximas reuniones",
                       },
                     ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between space-x-2">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between space-x-2"
+                      >
                         <div className="space-y-0.5">
                           <Label className="text-base">{item.title}</Label>
-                          <p className="text-sm text-muted-foreground">{item.description}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {item.description}
+                          </p>
                         </div>
                         <Switch />
                       </div>
@@ -322,7 +471,9 @@ export default function ConfiguracionPage() {
                     <SelectItem value="never">Nunca</SelectItem>
                     <SelectItem value="start-of-day">Inicio del día</SelectItem>
                     <SelectItem value="end-of-day">Final del día</SelectItem>
-                    <SelectItem value="twice-daily">Dos veces al día</SelectItem>
+                    <SelectItem value="twice-daily">
+                      Dos veces al día
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -336,7 +487,9 @@ export default function ConfiguracionPage() {
           <Card>
             <CardHeader>
               <CardTitle>Canales de Comunicación</CardTitle>
-              <CardDescription>Configura tus métodos preferidos de contacto</CardDescription>
+              <CardDescription>
+                Configura tus métodos preferidos de contacto
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
@@ -360,12 +513,17 @@ export default function ConfiguracionPage() {
                     verified: false,
                   },
                 ].map((channel, index) => (
-                  <div key={index} className="flex items-center justify-between">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
                     <div className="flex items-center space-x-4">
                       <channel.icon className="h-5 w-5 text-muted-foreground" />
                       <div className="space-y-0.5">
                         <p className="text-sm font-medium">{channel.type}</p>
-                        <p className="text-sm text-muted-foreground">{channel.value}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {channel.value}
+                        </p>
                       </div>
                     </div>
                     {channel.verified ? (
@@ -373,7 +531,10 @@ export default function ConfiguracionPage() {
                         Verificado
                       </Button>
                     ) : (
-                      <Button size="sm" className="gap-1 bg-primary hover:bg-primary/90">
+                      <Button
+                        size="sm"
+                        className="gap-1 bg-primary hover:bg-primary/90"
+                      >
                         Verificar
                       </Button>
                     )}
@@ -391,14 +552,18 @@ export default function ConfiguracionPage() {
           <Card>
             <CardHeader>
               <CardTitle>Tema y Visualización</CardTitle>
-              <CardDescription>Personaliza la apariencia de la aplicación</CardDescription>
+              <CardDescription>
+                Personaliza la apariencia de la aplicación
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label>Tema</Label>
-                    <p className="text-sm text-muted-foreground">Selecciona el tema de la interfaz</p>
+                    <p className="text-sm text-muted-foreground">
+                      Selecciona el tema de la interfaz
+                    </p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Button variant="outline" size="icon" className="h-8 w-8">
@@ -423,9 +588,13 @@ export default function ConfiguracionPage() {
                       <Button
                         key={index}
                         variant="outline"
-                        className={`h-8 w-full justify-start gap-2 ${index === 0 ? "border-2 border-primary" : ""}`}
+                        className={`h-8 w-full justify-start gap-2 ${
+                          index === 0 ? "border-2 border-primary" : ""
+                        }`}
                       >
-                        <div className={`h-4 w-4 rounded-full ${theme.color}`} />
+                        <div
+                          className={`h-4 w-4 rounded-full ${theme.color}`}
+                        />
                         <span className="text-xs">{theme.name}</span>
                       </Button>
                     ))}
@@ -434,7 +603,9 @@ export default function ConfiguracionPage() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label>Densidad de contenido</Label>
-                    <p className="text-sm text-muted-foreground">Ajusta el espaciado entre elementos</p>
+                    <p className="text-sm text-muted-foreground">
+                      Ajusta el espaciado entre elementos
+                    </p>
                   </div>
                   <Select defaultValue="normal">
                     <SelectTrigger className="w-[120px]">
@@ -457,6 +628,5 @@ export default function ConfiguracionPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
-
