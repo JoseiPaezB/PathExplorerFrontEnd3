@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
 import {
   Award,
@@ -14,14 +14,20 @@ import {
   MapPin,
   Phone,
   User,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import type { User as AuthUser } from "@/types/auth";
 import { useAuth } from "@/contexts/auth-context";
 import axios from "axios";
@@ -46,43 +52,54 @@ type Certification = {
   nivel?: number;
 };
 
-
 export default function PerfilPage() {
   const { user } = useAuth() as { user: AuthUser | null };
-  const [activeTab, setActiveTab] = useState("informacion"); 
+  const [activeTab, setActiveTab] = useState("informacion");
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [professionalHistory, setProfessionalHistory] = useState<ProfessionalHistory | null>(null);
+  const [professionalHistory, setProfessionalHistory] =
+    useState<ProfessionalHistory | null>(null);
 
   useEffect(() => {
     const fetchProfessionalHistory = async () => {
       try {
         // Get the token
         const token = localStorage.getItem("token");
-        
+
         // Make the request to the new endpoint
-        const response = await axios.get(`${API_URL}/auth/professional-history`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-    
+        const response = await axios.get(
+          `${API_URL}/auth/professional-history`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         if (response.data.success) {
           setProfessionalHistory(response.data.professionalHistory);
         } else {
-          setError(response.data.message || "Error fetching professional history");
+          setError(
+            response.data.message || "Error fetching professional history"
+          );
         }
       } catch (error) {
         console.error("Error fetching professional history:", error);
         if (axios.isAxiosError(error)) {
-          setError(`Error fetching professional history: ${error.response?.status} - ${error.response?.data?.message || error.message}`);
+          setError(
+            `Error fetching professional history: ${error.response?.status} - ${
+              error.response?.data?.message || error.message
+            }`
+          );
         } else {
-          setError("An unknown error occurred while fetching professional history.");
+          setError(
+            "An unknown error occurred while fetching professional history."
+          );
         }
       }
     };
-    
+
     fetchProfessionalHistory();
   }, []);
 
@@ -90,17 +107,17 @@ export default function PerfilPage() {
     const fetchCertifications = async () => {
       try {
         setIsLoading(true);
-        
+
         // Get the token
         const token = localStorage.getItem("token");
-        
+
         // Make the request using the correct URL
         const response = await axios.get(`${API_URL}/auth/certifications`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-    
+
         if (response.data.success) {
           // Define an interface for the raw certification data from the backend
           interface RawCertification {
@@ -110,16 +127,18 @@ export default function PerfilPage() {
             Validez: number | string;
             Nivel?: number | string;
           }
-        
+
           // Use the interface in the mapping function
-          const formattedCertifications = response.data.certifications.map((cert: RawCertification) => ({
-            id_certificacion: cert.ID_Certificacion,
-            nombre: cert.Nombre,
-            institucion: cert.Institucion,
-            validez: cert.Validez,
-            nivel: cert.Nivel,
-          }));
-        
+          const formattedCertifications = response.data.certifications.map(
+            (cert: RawCertification) => ({
+              id_certificacion: cert.ID_Certificacion,
+              nombre: cert.Nombre,
+              institucion: cert.Institucion,
+              validez: cert.Validez,
+              nivel: cert.Nivel,
+            })
+          );
+
           setCertifications(formattedCertifications);
         } else {
           setError(response.data.message || "Error fetching certifications");
@@ -127,7 +146,11 @@ export default function PerfilPage() {
       } catch (error) {
         console.error("Error fetching certifications:", error);
         if (axios.isAxiosError(error)) {
-          setError(`Error fetching certifications: ${error.response?.status} - ${error.response?.data?.message || error.message}`);
+          setError(
+            `Error fetching certifications: ${error.response?.status} - ${
+              error.response?.data?.message || error.message
+            }`
+          );
         } else {
           setError("An unknown error occurred while fetching certifications.");
         }
@@ -135,7 +158,7 @@ export default function PerfilPage() {
         setIsLoading(false);
       }
     };
-  
+
     fetchCertifications();
   }, []);
 
@@ -145,7 +168,10 @@ export default function PerfilPage() {
         <CardContent className="p-6">
           <div className="flex flex-col gap-6 md:flex-row md:items-center">
             <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-              <AvatarImage src="/placeholder.svg?height=96&width=96" alt="Juan Díaz" />
+              <AvatarImage
+                src="/placeholder.svg?height=96&width=96"
+                alt="Juan Díaz"
+              />
               <AvatarFallback className="text-2xl">JD</AvatarFallback>
             </Avatar>
             <div className="space-y-1.5">
@@ -165,12 +191,18 @@ export default function PerfilPage() {
                 </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4" />
-                  <span> {user?.fecha_contratacion &&
-                new Date(user.fecha_contratacion).toLocaleDateString("es-ES", {
-                  year: "numeric",
-                  month: "long",
-                  day: "2-digit",
-                })}</span>
+                  <span>
+                    {" "}
+                    {user?.fecha_contratacion &&
+                      new Date(user.fecha_contratacion).toLocaleDateString(
+                        "es-ES",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "2-digit",
+                        }
+                      )}
+                  </span>
                 </div>
               </div>
             </div>
@@ -179,7 +211,10 @@ export default function PerfilPage() {
                 <Edit className="h-4 w-4" />
                 Editar perfil
               </Button>
-              <Button size="sm" className="gap-1 bg-primary hover:bg-primary/90">
+              <Button
+                size="sm"
+                className="gap-1 bg-primary hover:bg-primary/90"
+              >
                 <FileText className="h-4 w-4" />
                 Descargar CV
               </Button>
@@ -188,7 +223,11 @@ export default function PerfilPage() {
         </CardContent>
       </Card>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
         <TabsList className="grid w-full grid-cols-3 lg:w-auto">
           <TabsTrigger value="informacion">Información</TabsTrigger>
           <TabsTrigger value="habilidades">Habilidades</TabsTrigger>
@@ -233,24 +272,30 @@ export default function PerfilPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-              <div className="space-y-3">
-              {certifications && certifications.length > 0 ? (
-                certifications.map((cert) => (
-                  <div key={cert.id_certificacion} className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium">{cert.nombre}</h4>
-                      <span className="text-xs text-muted-foreground">{cert.validez}</span>
+                <div className="space-y-3">
+                  {certifications && certifications.length > 0 ? (
+                    certifications.map((cert) => (
+                      <div key={cert.id_certificacion} className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm font-medium">{cert.nombre}</h4>
+                          <span className="text-xs text-muted-foreground">
+                            {cert.validez}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {cert.institucion}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">
+                        No hay certificaciones disponibles
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">{cert.institucion}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">No hay certificaciones disponibles</p>
+                  )}
                 </div>
-              )}
-              </div>
-            </CardContent>
+              </CardContent>
             </Card>
           </div>
 
@@ -262,36 +307,56 @@ export default function PerfilPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="space-y-16"> {/* Increased spacing between entries */}
-                  {isLoading ? (
-                    <p>Cargando historial profesional...</p>
-                  ) : error ? (
-                    <p className="text-red-500">{error}</p>
-                  ) : professionalHistory && professionalHistory.length > 0 ? (
-                    professionalHistory.map((entry, index) => (
-                      <div key={index} className="relative border-l border-muted pl-6 pb-8"> {/* Added more bottom padding */}
-                        <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
-                        <div className="space-y-4"> {/* Increased internal spacing */}
-                          <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-                            <h4 className="font-medium">{entry.role || "Posición no especificada"}</h4>
-                          </div>
-                          <p className="text-sm font-medium text-primary">{entry.nombre} {entry.apellido}</p>
-                          <p className="text-sm text-muted-foreground whitespace-pre-line">{entry.historial}</p>
-                          {entry.achievements && (
-                            <div className="space-y-3 mt-6"> {/* Increased spacing for achievements section */}
-                              <p className="text-sm font-medium">Logros destacados:</p>
-                              <p className="text-sm text-muted-foreground">{entry.achievements}</p>
-                            </div>
-                          )}
+              <div className="space-y-16">
+                {" "}
+                {/* Increased spacing between entries */}
+                {isLoading ? (
+                  <p>Cargando historial profesional...</p>
+                ) : error ? (
+                  <p className="text-red-500">{error}</p>
+                ) : professionalHistory && professionalHistory.length > 0 ? (
+                  professionalHistory.map((entry, index) => (
+                    <div
+                      key={index}
+                      className="relative border-l border-muted pl-6 pb-8"
+                    >
+                      {" "}
+                      {/* Added more bottom padding */}
+                      <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
+                      <div className="space-y-4">
+                        {" "}
+                        {/* Increased internal spacing */}
+                        <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
+                          <h4 className="font-medium">
+                            {entry.role || "Posición no especificada"}
+                          </h4>
                         </div>
+                        <p className="text-sm font-medium text-primary">
+                          {entry.nombre} {entry.apellido}
+                        </p>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">
+                          {entry.historial}
+                        </p>
+                        {entry.achievements && (
+                          <div className="space-y-3 mt-6">
+                            {" "}
+                            {/* Increased spacing for achievements section */}
+                            <p className="text-sm font-medium">
+                              Logros destacados:
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {entry.achievements}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    ))
-                  ) : (
-                    <p>No hay historial profesional disponible</p>
-                  )}
-                </div>
-              </CardContent>
-
+                    </div>
+                  ))
+                ) : (
+                  <p>No hay historial profesional disponible</p>
+                )}
+              </div>
+            </CardContent>
           </Card>
         </TabsContent>
 
@@ -304,7 +369,8 @@ export default function PerfilPage() {
                   Habilidades Técnicas
                 </CardTitle>
                 <CardDescription>
-                  Evaluación de competencias técnicas basada en proyectos y certificaciones
+                  Evaluación de competencias técnicas basada en proyectos y
+                  certificaciones
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -319,8 +385,12 @@ export default function PerfilPage() {
                   ].map((skill, index) => (
                     <div key={index} className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{skill.name}</span>
-                        <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                        <span className="text-sm font-medium">
+                          {skill.name}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {skill.level}%
+                        </span>
                       </div>
                       <Progress value={skill.level} className="h-2" />
                     </div>
@@ -336,7 +406,8 @@ export default function PerfilPage() {
                   Habilidades Blandas
                 </CardTitle>
                 <CardDescription>
-                  Evaluación de competencias interpersonales basada en feedback de equipo
+                  Evaluación de competencias interpersonales basada en feedback
+                  de equipo
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -351,8 +422,12 @@ export default function PerfilPage() {
                   ].map((skill, index) => (
                     <div key={index} className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{skill.name}</span>
-                        <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                        <span className="text-sm font-medium">
+                          {skill.name}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {skill.level}%
+                        </span>
                       </div>
                       <Progress value={skill.level} className="h-2" />
                     </div>
@@ -368,7 +443,9 @@ export default function PerfilPage() {
                 <GraduationCap className="h-5 w-5 text-primary" />
                 Gráfico de Competencias
               </CardTitle>
-              <CardDescription>Visualización de habilidades técnicas y blandas en formato radar</CardDescription>
+              <CardDescription>
+                Visualización de habilidades técnicas y blandas en formato radar
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex h-80 items-center justify-center">
@@ -392,7 +469,10 @@ export default function PerfilPage() {
                 <Flag className="h-5 w-5 text-primary" />
                 Plan de Carrera
               </CardTitle>
-              <CardDescription>Objetivos profesionales y plan de desarrollo a corto y largo plazo</CardDescription>
+              <CardDescription>
+                Objetivos profesionales y plan de desarrollo a corto y largo
+                plazo
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-8">
@@ -400,15 +480,16 @@ export default function PerfilPage() {
                   <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Objetivo a Corto Plazo (6 meses)</h4>
+                      <h4 className="font-medium">
+                        Objetivo a Corto Plazo (6 meses)
+                      </h4>
                       <Badge className="inline-flex items-center px-3 py-1 whitespace-nowrap bg-emerald-500 text-white">
                         En progreso
                       </Badge>
-
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Obtener certificación en AWS Solutions Architect Professional y liderar un proyecto de migración a
-                      la nube.
+                      Obtener certificación en AWS Solutions Architect
+                      Professional y liderar un proyecto de migración a la nube.
                     </p>
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
@@ -420,10 +501,14 @@ export default function PerfilPage() {
                     <div className="space-y-1 pt-2">
                       <p className="text-sm font-medium">Pasos a seguir:</p>
                       <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                        <li>Completar curso online de preparación (Completado)</li>
+                        <li>
+                          Completar curso online de preparación (Completado)
+                        </li>
                         <li>Realizar laboratorios prácticos (En progreso)</li>
                         <li>Programar examen de certificación</li>
-                        <li>Proponer proyecto de migración al equipo directivo</li>
+                        <li>
+                          Proponer proyecto de migración al equipo directivo
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -433,13 +518,19 @@ export default function PerfilPage() {
                   <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-muted" />
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Objetivo a Medio Plazo (1-2 años)</h4>
-                      <Badge variant="outline" className="text-muted-foreground">
+                      <h4 className="font-medium">
+                        Objetivo a Medio Plazo (1-2 años)
+                      </h4>
+                      <Badge
+                        variant="outline"
+                        className="text-muted-foreground"
+                      >
                         Planificado
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Asumir rol de Arquitecto de Soluciones y liderar un equipo técnico de al menos 5 personas.
+                      Asumir rol de Arquitecto de Soluciones y liderar un equipo
+                      técnico de al menos 5 personas.
                     </p>
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
@@ -451,10 +542,15 @@ export default function PerfilPage() {
                     <div className="space-y-1 pt-2">
                       <p className="text-sm font-medium">Pasos a seguir:</p>
                       <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                        <li>Completar certificaciones avanzadas en arquitectura de software</li>
+                        <li>
+                          Completar certificaciones avanzadas en arquitectura de
+                          software
+                        </li>
                         <li>Participar en programa de liderazgo interno</li>
                         <li>Mentorizar a desarrolladores junior</li>
-                        <li>Proponer mejoras arquitectónicas en proyectos actuales</li>
+                        <li>
+                          Proponer mejoras arquitectónicas en proyectos actuales
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -464,14 +560,19 @@ export default function PerfilPage() {
                   <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-muted" />
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Objetivo a Largo Plazo (3-5 años)</h4>
-                      <Badge variant="outline" className="text-muted-foreground">
+                      <h4 className="font-medium">
+                        Objetivo a Largo Plazo (3-5 años)
+                      </h4>
+                      <Badge
+                        variant="outline"
+                        className="text-muted-foreground"
+                      >
                         Planificado
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Alcanzar posición de Director Técnico (CTO) o Director de Ingeniería, liderando la estrategia
-                      tecnológica.
+                      Alcanzar posición de Director Técnico (CTO) o Director de
+                      Ingeniería, liderando la estrategia tecnológica.
                     </p>
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
@@ -483,7 +584,9 @@ export default function PerfilPage() {
                     <div className="space-y-1 pt-2">
                       <p className="text-sm font-medium">Pasos a seguir:</p>
                       <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                        <li>Completar MBA o formación en gestión tecnológica</li>
+                        <li>
+                          Completar MBA o formación en gestión tecnológica
+                        </li>
                         <li>Ampliar red de contactos en la industria</li>
                         <li>Participar en conferencias como ponente</li>
                         <li>Liderar iniciativas de innovación en la empresa</li>
@@ -526,6 +629,5 @@ export default function PerfilPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
-
