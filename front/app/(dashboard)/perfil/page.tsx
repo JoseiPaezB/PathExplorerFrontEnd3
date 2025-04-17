@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Mail,
   MapPin,
+  Omega,
   Phone,
   User,
 } from "lucide-react";
@@ -29,33 +30,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import type { User as AuthUser } from "@/types/auth";
+import type { CertificationsArray, ProfessionalHistory } from "@/types/users";
+
 import { useAuth } from "@/contexts/auth-context";
 import axios from "axios";
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
-
-type ProfessionalHistoryEntry = {
-  nombre: string;
-  apellido: string;
-  historial: string;
-  role: string;
-  achievements: string;
-};
-
-// Since we're now receiving an array from the backend
-type ProfessionalHistory = ProfessionalHistoryEntry[];
-
-type Certification = {
-  id_certificacion: number;
-  nombre: string;
-  institucion: string;
-  validez: number;
-  nivel?: number;
-};
+import { getProfessionalHistoryUser, getCertificationsUser } from "./actions";
+import { set } from "date-fns";
 
 export default function PerfilPage() {
   const { user } = useAuth() as { user: AuthUser | null };
   const [activeTab, setActiveTab] = useState("informacion");
-  const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [certifications, setCertifications] = useState<CertificationsArray>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [professionalHistory, setProfessionalHistory] =
@@ -64,26 +49,10 @@ export default function PerfilPage() {
   useEffect(() => {
     const fetchProfessionalHistory = async () => {
       try {
-        // Get the token
         const token = localStorage.getItem("token");
 
-        // Make the request to the new endpoint
-        const response = await axios.get(
-          `${API_URL}/auth/professional-history`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.data.success) {
-          setProfessionalHistory(response.data.professionalHistory);
-        } else {
-          setError(
-            response.data.message || "Error fetching professional history"
-          );
-        }
+        const response = await getProfessionalHistoryUser(token || "");
+        setProfessionalHistory(response);
       } catch (error) {
         console.error("Error fetching professional history:", error);
         if (axios.isAxiosError(error)) {
@@ -108,41 +77,9 @@ export default function PerfilPage() {
       try {
         setIsLoading(true);
 
-        // Get the token
         const token = localStorage.getItem("token");
-
-        // Make the request using the correct URL
-        const response = await axios.get(`${API_URL}/auth/certifications`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.data.success) {
-          // Define an interface for the raw certification data from the backend
-          interface RawCertification {
-            ID_Certificacion: number;
-            Nombre: string;
-            Institucion: string;
-            Validez: number | string;
-            Nivel?: number | string;
-          }
-
-          // Use the interface in the mapping function
-          const formattedCertifications = response.data.certifications.map(
-            (cert: RawCertification) => ({
-              id_certificacion: cert.ID_Certificacion,
-              nombre: cert.Nombre,
-              institucion: cert.Institucion,
-              validez: cert.Validez,
-              nivel: cert.Nivel,
-            })
-          );
-
-          setCertifications(formattedCertifications);
-        } else {
-          setError(response.data.message || "Error fetching certifications");
-        }
+        const response = await getCertificationsUser(token || "");
+        setCertifications(response);
       } catch (error) {
         console.error("Error fetching certifications:", error);
         if (axios.isAxiosError(error)) {

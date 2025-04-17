@@ -1,4 +1,3 @@
-// contexts/auth-context.tsx
 "use client";
 
 import type React from "react";
@@ -9,27 +8,28 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import type { AuthState, User, LoginResponse } from "@/types/auth";
+import type { AuthState, User, LoginResponse, JwtPayload } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import type {
+  CoursesUserResponse,
+  UpdateProfileData,
+  CertificationsUserResponse,
+} from "@/types/users";
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<User | void>;
   logout: () => void;
   updateUserProfile: (profileData: UpdateProfileData) => Promise<User | void>;
+  courses: () => Promise<CoursesUserResponse | void>;
+  certifications: () => Promise<CertificationsUserResponse | void>;
   isLoggingOut: boolean;
-}
-
-interface UpdateProfileData {
-  nombre: string;
-  apellido: string;
-  correo: string;
-  cargo: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+const API_URL = "http://localhost:4000/api";
 
 const setCookie = (name: string, value: string, days: number = 7) => {
   const date = new Date();
@@ -43,6 +43,17 @@ const deleteCookie = (name: string) => {
   document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 };
 
+const isTokenExpired = (token: string): boolean => {
+  try {
+    const decoded = jwtDecode<JwtPayload>(token);
+    const currentTime = Date.now() / 1000;
+    return decoded.exp < currentTime;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return true;
+  }
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -51,12 +62,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
+  const clearAuthData = useCallback(() => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    deleteCookie("user");
+    setState({ user: null, isAuthenticated: false });
+  }, []);
+
   useEffect(() => {
     const init = async () => {
       const storedUser = localStorage.getItem("user");
       const token = localStorage.getItem("token");
 
       if (storedUser && token) {
+        if (isTokenExpired(token)) {
+          console.log("Token expired, logging out");
+          clearAuthData();
+          router.push("/login");
+          return;
+        }
+
         try {
           const parsedUser = JSON.parse(storedUser) as User;
           setState({
@@ -67,15 +92,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setCookie("user", storedUser);
         } catch (error) {
           console.error("Error parsing stored user:", error);
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          deleteCookie("user");
+          clearAuthData();
         }
       }
     };
 
     init();
-  }, []);
+  }, [clearAuthData, router]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const token = localStorage.getItem("token");
+      if (token && isTokenExpired(token)) {
+        console.log("Token expired during session, logging out");
+        clearAuthData();
+        router.push("/login");
+      }
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [clearAuthData, router]);
 
   const login = useCallback(
     async (email: string, password: string): Promise<User | void> => {
@@ -94,6 +130,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           response.data.user
         ) {
           const { token, user } = response.data;
+
+          if (isTokenExpired(token)) {
+            throw new Error("Received expired token from server");
+          }
 
           const userString = JSON.stringify(user);
 
@@ -117,8 +157,87 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
     },
-    []
+    [router]
   );
+
+  const courses = useCallback(async (): Promise<CoursesUserResponse | void> => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      if (isTokenExpired(token)) {
+        clearAuthData();
+        router.push("/login");
+        throw new Error("Session expired. Please login again.");
+      }
+
+      const response = await axios.get<CoursesUserResponse>(
+        `${API_URL}/auth/courses`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        return response.data;
+      } else {
+        throw new Error("Error fetching courses");
+      }
+    } catch (error) {
+      console.error("Courses fetch error:", error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || "Failed to fetch courses"
+        );
+      }
+      throw error;
+    }
+  }, []);
+
+  const certifications =
+    useCallback(async (): Promise<CertificationsUserResponse | void> => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        if (isTokenExpired(token)) {
+          clearAuthData();
+          router.push("/login");
+          throw new Error("Session expired. Please login again.");
+        }
+
+        const response = await axios.get<CertificationsUserResponse>(
+          `${API_URL}/auth/certifications`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data) {
+          return response.data;
+        } else {
+          throw new Error("Error fetching certifications");
+        }
+      } catch (error) {
+        console.error("Certifications fetch error:", error);
+        if (axios.isAxiosError(error)) {
+          throw new Error(
+            error.response?.data?.message || "Failed to fetch certifications"
+          );
+        }
+        throw error;
+      }
+    }, []);
 
   const updateUserProfile = useCallback(
     async (profileData: UpdateProfileData): Promise<User | void> => {
@@ -127,6 +246,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!token) {
           throw new Error("No authentication token found");
+        }
+
+        if (isTokenExpired(token)) {
+          clearAuthData();
+          router.push("/login");
+          throw new Error("Session expired. Please login again.");
         }
 
         const response = await axios.patch(
@@ -165,28 +290,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
     },
-    []
+    [clearAuthData, router]
   );
 
   const logout = useCallback(() => {
     setIsLoggingOut(true);
-
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    deleteCookie("user");
-
-    setState({ user: null, isAuthenticated: false });
-
+    clearAuthData();
     router.push("/login");
 
     setTimeout(() => {
       setIsLoggingOut(false);
     }, 500);
-  }, [router]);
+  }, [clearAuthData, router]);
 
   useEffect(() => {
-    console.log("Auth state updated:", state.isAuthenticated);
-  }, [state]);
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          clearAuthData();
+          router.push("/login");
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
+  }, [clearAuthData, router]);
 
   return (
     <AuthContext.Provider
@@ -195,6 +327,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         updateUserProfile,
+        courses,
+        certifications,
         isLoggingOut,
       }}
     >
