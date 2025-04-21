@@ -154,18 +154,6 @@ export default function UsuariosPage() {
                     </Badge>
                   </div>
                   <Badge>{user.puesto_actual}</Badge>
-                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Lock className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-red-500 hover:text-red-600"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
               </div>
             ))}

@@ -36,6 +36,7 @@ import { useAuth } from "@/contexts/auth-context";
 import axios from "axios";
 import { getProfessionalHistoryUser, getCertificationsUser } from "./actions";
 import { set } from "date-fns";
+import Link from "next/link";
 
 export default function PerfilPage() {
   const { user } = useAuth() as { user: AuthUser | null };
@@ -144,10 +145,13 @@ export default function PerfilPage() {
               </div>
             </div>
             <div className="ml-auto flex flex-col gap-2 md:flex-row">
-              <Button variant="outline" size="sm" className="gap-1">
-                <Edit className="h-4 w-4" />
-                Editar perfil
-              </Button>
+              <Link href="/configuracion">
+                <Button variant="outline" size="sm" className="gap-1">
+                  <Edit className="h-4 w-4" />
+                  Editar perfil
+                </Button>
+              </Link>
+
               <Button
                 size="sm"
                 className="gap-1 bg-primary hover:bg-primary/90"
@@ -246,7 +250,6 @@ export default function PerfilPage() {
             <CardContent>
               <div className="space-y-16">
                 {" "}
-                {/* Increased spacing between entries */}
                 {isLoading ? (
                   <p>Cargando historial profesional...</p>
                 ) : error ? (
@@ -258,11 +261,9 @@ export default function PerfilPage() {
                       className="relative border-l border-muted pl-6 pb-8"
                     >
                       {" "}
-                      {/* Added more bottom padding */}
                       <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
                       <div className="space-y-4">
                         {" "}
-                        {/* Increased internal spacing */}
                         <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
                           <h4 className="font-medium">
                             {entry.role || "Posición no especificada"}
@@ -277,7 +278,6 @@ export default function PerfilPage() {
                         {entry.achievements && (
                           <div className="space-y-3 mt-6">
                             {" "}
-                            {/* Increased spacing for achievements section */}
                             <p className="text-sm font-medium">
                               Logros destacados:
                             </p>
