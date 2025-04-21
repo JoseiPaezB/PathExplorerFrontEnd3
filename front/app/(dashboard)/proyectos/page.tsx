@@ -1,15 +1,31 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Calendar, ChevronDown, Clock, Download, Filter, Plus, Search, User } from "lucide-react"
+import { useState } from "react";
+import {
+  Calendar,
+  ChevronDown,
+  Clock,
+  Download,
+  Filter,
+  Plus,
+  Search,
+  User,
+} from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,19 +33,28 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function ProyectosPage() {
-  const [activeTab, setActiveTab] = useState("kanban")
-  const [showNewProjectDialog, setShowNewProjectDialog] = useState(false)
+  const [activeTab, setActiveTab] = useState("kanban");
+  const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Gestión de Proyectos</h1>
-          <p className="text-muted-foreground">Administra tus proyectos y asignaciones de roles</p>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Gestión de Proyectos
+          </h1>
+          <p className="text-muted-foreground">
+            Administra tus proyectos y asignaciones de roles
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -95,7 +120,11 @@ export default function ProyectosPage() {
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="kanban">Vista Kanban</TabsTrigger>
           <TabsTrigger value="lista">Vista Lista</TabsTrigger>
@@ -104,7 +133,6 @@ export default function ProyectosPage() {
 
         <TabsContent value="kanban" className="space-y-4">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {/* Columna: Roles por Llenar */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">Roles por Llenar</h3>
@@ -116,8 +144,13 @@ export default function ProyectosPage() {
               <Card className="border-l-4 border-l-yellow-500">
                 <CardHeader className="p-4 pb-2">
                   <div className="flex justify-between">
-                    <CardTitle className="text-base">Desarrollador Frontend</CardTitle>
-                    <Badge variant="outline" className="bg-yellow-50 text-yellow-700">
+                    <CardTitle className="text-base">
+                      Desarrollador Frontend
+                    </CardTitle>
+                    <Badge
+                      variant="outline"
+                      className="bg-yellow-50 text-yellow-700"
+                    >
                       Urgente
                     </Badge>
                   </div>
@@ -126,7 +159,9 @@ export default function ProyectosPage() {
                 <CardContent className="p-4 pt-0">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Fecha inicio:</span>
+                      <span className="text-muted-foreground">
+                        Fecha inicio:
+                      </span>
                       <span>15/04/2025</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
@@ -150,12 +185,16 @@ export default function ProyectosPage() {
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
                         <p className="text-xs">
-                          Ana García tiene experiencia en React y ha trabajado en proyectos similares.
+                          Ana García tiene experiencia en React y ha trabajado
+                          en proyectos similares.
                         </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <Button size="sm" className="h-8 bg-primary hover:bg-primary/90">
+                  <Button
+                    size="sm"
+                    className="h-8 bg-primary hover:bg-primary/90"
+                  >
                     Asignar
                   </Button>
                 </CardFooter>
@@ -165,16 +204,23 @@ export default function ProyectosPage() {
                 <CardHeader className="p-4 pb-2">
                   <div className="flex justify-between">
                     <CardTitle className="text-base">DevOps Engineer</CardTitle>
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                    <Badge
+                      variant="outline"
+                      className="bg-blue-50 text-blue-700"
+                    >
                       Normal
                     </Badge>
                   </div>
-                  <CardDescription>Proyecto: Migración a la Nube</CardDescription>
+                  <CardDescription>
+                    Proyecto: Migración a la Nube
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Fecha inicio:</span>
+                      <span className="text-muted-foreground">
+                        Fecha inicio:
+                      </span>
                       <span>01/05/2025</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
@@ -197,18 +243,23 @@ export default function ProyectosPage() {
                         </div>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        <p className="text-xs">Carlos López tiene certificaciones en AWS y experiencia en CI/CD.</p>
+                        <p className="text-xs">
+                          Carlos López tiene certificaciones en AWS y
+                          experiencia en CI/CD.
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <Button size="sm" className="h-8 bg-primary hover:bg-primary/90">
+                  <Button
+                    size="sm"
+                    className="h-8 bg-primary hover:bg-primary/90"
+                  >
                     Asignar
                   </Button>
                 </CardFooter>
               </Card>
             </div>
 
-            {/* Columna: Roles Asignados */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">Roles Asignados</h3>
@@ -220,8 +271,13 @@ export default function ProyectosPage() {
               <Card className="border-l-4 border-l-green-500">
                 <CardHeader className="p-4 pb-2">
                   <div className="flex justify-between">
-                    <CardTitle className="text-base">Desarrollador Full Stack</CardTitle>
-                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                    <CardTitle className="text-base">
+                      Desarrollador Full Stack
+                    </CardTitle>
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-700"
+                    >
                       Asignado
                     </Badge>
                   </div>
@@ -231,12 +287,17 @@ export default function ProyectosPage() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Juan Díaz" />
+                        <AvatarImage
+                          src="/placeholder.svg?height=32&width=32"
+                          alt="Juan Díaz"
+                        />
                         <AvatarFallback>JD</AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">Juan Díaz</p>
-                        <p className="text-xs text-muted-foreground">Asignado: 10/02/2025</p>
+                        <p className="text-xs text-muted-foreground">
+                          Asignado: 10/02/2025
+                        </p>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -263,22 +324,32 @@ export default function ProyectosPage() {
                 <CardHeader className="p-4 pb-2">
                   <div className="flex justify-between">
                     <CardTitle className="text-base">UI/UX Designer</CardTitle>
-                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-700"
+                    >
                       Asignado
                     </Badge>
                   </div>
-                  <CardDescription>Proyecto: Portal de Clientes</CardDescription>
+                  <CardDescription>
+                    Proyecto: Portal de Clientes
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src="/placeholder.svg?height=32&width=32" alt="María Rodríguez" />
+                        <AvatarImage
+                          src="/placeholder.svg?height=32&width=32"
+                          alt="María Rodríguez"
+                        />
                         <AvatarFallback>MR</AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">María Rodríguez</p>
-                        <p className="text-xs text-muted-foreground">Asignado: 05/01/2025</p>
+                        <p className="text-xs text-muted-foreground">
+                          Asignado: 05/01/2025
+                        </p>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -317,18 +388,25 @@ export default function ProyectosPage() {
                     <CardTitle className="text-base">DevOps Engineer</CardTitle>
                     <Badge variant="outline">Completado</Badge>
                   </div>
-                  <CardDescription>Proyecto: Migración a la Nube</CardDescription>
+                  <CardDescription>
+                    Proyecto: Migración a la Nube
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Pedro Sánchez" />
+                        <AvatarImage
+                          src="/placeholder.svg?height=32&width=32"
+                          alt="Pedro Sánchez"
+                        />
                         <AvatarFallback>PS</AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">Pedro Sánchez</p>
-                        <p className="text-xs text-muted-foreground">Completado: 10/01/2025</p>
+                        <p className="text-xs text-muted-foreground">
+                          Completado: 10/01/2025
+                        </p>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -403,7 +481,10 @@ export default function ProyectosPage() {
                 progress: 100,
               },
             ].map((item, index) => (
-              <div key={index} className="grid grid-cols-8 gap-4 border-t p-4 text-sm items-center">
+              <div
+                key={index}
+                className="grid grid-cols-8 gap-4 border-t p-4 text-sm items-center"
+              >
                 <div className="col-span-2">
                   <p className="font-medium">{item.project}</p>
                   <p className="text-muted-foreground">{item.role}</p>
@@ -415,8 +496,8 @@ export default function ProyectosPage() {
                       item.status === "Pendiente"
                         ? "bg-yellow-50 text-yellow-700"
                         : item.status === "En progreso"
-                          ? "bg-green-50 text-green-700"
-                          : "bg-gray-50 text-gray-700"
+                        ? "bg-green-50 text-green-700"
+                        : "bg-gray-50 text-gray-700"
                     }
                   >
                     {item.status}
@@ -426,7 +507,10 @@ export default function ProyectosPage() {
                   {item.assignedTo ? (
                     <div className="flex items-center gap-2">
                       <Avatar className="h-6 w-6">
-                        <AvatarImage src="/placeholder.svg?height=24&width=24" alt={item.assignedTo} />
+                        <AvatarImage
+                          src="/placeholder.svg?height=24&width=24"
+                          alt={item.assignedTo}
+                        />
                         <AvatarFallback>
                           {item.assignedTo
                             .split(" ")
@@ -464,12 +548,13 @@ export default function ProyectosPage() {
             <div className="text-center">
               <Calendar className="mx-auto h-8 w-8 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-medium">Vista de Calendario</h3>
-              <p className="mt-2 text-sm text-muted-foreground">La vista de calendario se implementará próximamente.</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                La vista de calendario se implementará próximamente.
+              </p>
             </div>
           </div>
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
-

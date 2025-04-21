@@ -35,7 +35,6 @@ import type { CertificationsArray, ProfessionalHistory } from "@/types/users";
 import { useAuth } from "@/contexts/auth-context";
 import axios from "axios";
 import { getProfessionalHistoryUser, getCertificationsUser } from "./actions";
-import { set } from "date-fns";
 import Link from "next/link";
 
 export default function PerfilPage() {

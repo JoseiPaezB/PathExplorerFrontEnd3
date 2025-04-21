@@ -59,12 +59,10 @@ export function Sidebar({
         href: "/cursos-y-certificaciones",
         icon: BookOpen,
       },
-      { title: "Mi Desempeño", href: "/analitica", icon: BarChart3 },
     ],
     manager: [
       { title: "Gestión de Proyectos", href: "/proyectos", icon: Briefcase },
       { title: "Equipo", href: "/equipo", icon: Users },
-      { title: "Analítica", href: "/analitica", icon: BarChart3 },
     ],
     administrador: [
       { title: "Gestión de Usuarios", href: "/usuarios", icon: Users },
