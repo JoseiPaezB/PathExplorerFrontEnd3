@@ -12,7 +12,6 @@ import {
   GraduationCap,
   Mail,
   MapPin,
-  Omega,
   Phone,
   User,
 } from "lucide-react";
@@ -45,7 +44,6 @@ export default function PerfilPage() {
   const [error, setError] = useState<string | null>(null);
   const [professionalHistory, setProfessionalHistory] =
     useState<ProfessionalHistory | null>(null);
-
   useEffect(() => {
     const fetchProfessionalHistory = async () => {
       try {
@@ -253,41 +251,33 @@ export default function PerfilPage() {
                   <p>Cargando historial profesional...</p>
                 ) : error ? (
                   <p className="text-red-500">{error}</p>
-                ) : professionalHistory && professionalHistory.length > 0 ? (
-                  professionalHistory.map((entry, index) => (
-                    <div
-                      key={index}
-                      className="relative border-l border-muted pl-6 pb-8"
-                    >
-                      {" "}
-                      <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
-                      <div className="space-y-4">
+                ) : professionalHistory &&
+                  professionalHistory.professionalHistory.length > 0 ? (
+                  professionalHistory.professionalHistory.map(
+                    (entry, index) => (
+                      <div
+                        key={index}
+                        className="relative border-l border-muted pl-6 pb-8"
+                      >
                         {" "}
-                        <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-                          <h4 className="font-medium">
-                            {entry.role || "Posición no especificada"}
-                          </h4>
-                        </div>
-                        <p className="text-sm font-medium text-primary">
-                          {entry.nombre} {entry.apellido}
-                        </p>
-                        <p className="text-sm text-muted-foreground whitespace-pre-line">
-                          {entry.historial}
-                        </p>
-                        {entry.achievements && (
-                          <div className="space-y-3 mt-6">
-                            {" "}
-                            <p className="text-sm font-medium">
-                              Logros destacados:
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {entry.achievements}
-                            </p>
+                        <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
+                        <div className="space-y-4">
+                          {" "}
+                          <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
+                            <h4 className="font-medium">
+                              {entry.role || "Posición no especificada"}
+                            </h4>
                           </div>
-                        )}
+                          <p className="text-sm font-medium text-primary">
+                            {entry.nombre} {entry.apellido}
+                          </p>
+                          <p className="text-sm text-muted-foreground whitespace-pre-line">
+                            {entry.historial}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    )
+                  )
                 ) : (
                   <p>No hay historial profesional disponible</p>
                 )}

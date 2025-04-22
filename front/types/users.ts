@@ -70,10 +70,12 @@ type ProfessionalHistoryEntry = {
   apellido: string;
   historial: string;
   role: string;
-  achievements: string;
 };
 
-export type ProfessionalHistory = ProfessionalHistoryEntry[];
+export type ProfessionalHistory = {
+  success: boolean;
+  professionalHistory: ProfessionalHistoryEntry[];
+};
 
 export type CertificationItem = {
   id_certificacion: number;
