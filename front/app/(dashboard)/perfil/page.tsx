@@ -10,9 +10,6 @@ import {
   FileText,
   Flag,
   GraduationCap,
-  Mail,
-  MapPin,
-  Phone,
   User,
 } from "lucide-react";
 
@@ -28,74 +25,143 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import type { User as AuthUser } from "@/types/auth";
-import type { CertificationsArray, ProfessionalHistory } from "@/types/users";
+import type {
+  CertificationsUserResponse,
+  CoursesUserResponse,
+  ProfessionalHistory,
+  SkillsResponse,
+  UserTrajectoryResponse,
+} from "@/types/users";
 
 import { useAuth } from "@/contexts/auth-context";
-import axios from "axios";
-import { getProfessionalHistoryUser, getCertificationsUser } from "./actions";
 import Link from "next/link";
 
 export default function PerfilPage() {
-  const { user } = useAuth() as { user: AuthUser | null };
+  const {
+    user,
+    professionalHistory: fetchProfessionalHistory,
+    courses: fetchCourses,
+    certifications: fetchCertifications,
+    skills: fetchSkills,
+    goalsAndTrajectory: fetchGoalsAndTrajectory,
+  } = useAuth();
+
   const [activeTab, setActiveTab] = useState("informacion");
-  const [certifications, setCertifications] = useState<CertificationsArray>([]);
+  const [certifications, setCertifications] =
+    useState<CertificationsUserResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [professionalHistory, setProfessionalHistory] =
+  const [professionalHistoryData, setProfessionalHistoryData] =
     useState<ProfessionalHistory | null>(null);
-  useEffect(() => {
-    const fetchProfessionalHistory = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const [coursesData, setCoursesData] = useState<CoursesUserResponse | null>(
+    null
+  );
+  const [skills, setSkills] = useState<SkillsResponse>();
+  const [goalsAndTrajectory, setGoalsAndTrajectory] =
+    useState<UserTrajectoryResponse | null>(null);
 
-        const response = await getProfessionalHistoryUser(token || "");
-        setProfessionalHistory(response);
+  useEffect(() => {
+    const loadProfessionalHistory = async () => {
+      try {
+        const history = await fetchProfessionalHistory();
+        if (history) {
+          setProfessionalHistoryData(history);
+        }
       } catch (error) {
         console.error("Error fetching professional history:", error);
-        if (axios.isAxiosError(error)) {
-          setError(
-            `Error fetching professional history: ${error.response?.status} - ${
-              error.response?.data?.message || error.message
-            }`
-          );
-        } else {
-          setError(
-            "An unknown error occurred while fetching professional history."
-          );
-        }
+        setError(
+          error instanceof Error
+            ? error.message
+            : "An unknown error occurred while fetching professional history."
+        );
       }
     };
 
-    fetchProfessionalHistory();
-  }, []);
+    loadProfessionalHistory();
+  }, [fetchProfessionalHistory]);
 
   useEffect(() => {
-    const fetchCertifications = async () => {
+    const loadCourses = async () => {
+      try {
+        const courses = await fetchCourses();
+        if (courses) {
+          setCoursesData(courses);
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "An unknown error occurred while fetching courses."
+        );
+      }
+    };
+
+    loadCourses();
+  }, [fetchCourses]);
+
+  useEffect(() => {
+    const loadCertifications = async () => {
       try {
         setIsLoading(true);
+        const certificationsData = await fetchCertifications();
 
-        const token = localStorage.getItem("token");
-        const response = await getCertificationsUser(token || "");
-        setCertifications(response);
+        if (certificationsData?.certifications) {
+          setCertifications(certificationsData);
+        }
       } catch (error) {
         console.error("Error fetching certifications:", error);
-        if (axios.isAxiosError(error)) {
-          setError(
-            `Error fetching certifications: ${error.response?.status} - ${
-              error.response?.data?.message || error.message
-            }`
-          );
-        } else {
-          setError("An unknown error occurred while fetching certifications.");
-        }
+        setError(
+          error instanceof Error
+            ? error.message
+            : "An unknown error occurred while fetching certifications."
+        );
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchCertifications();
-  }, []);
+    loadCertifications();
+  }, [fetchCertifications]);
+
+  useEffect(() => {
+    const loadSkills = async () => {
+      try {
+        const skillsData = await fetchSkills();
+        if (skillsData) {
+          setSkills(skillsData);
+        }
+      } catch (error) {
+        console.error("Error fetching skills:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "An unknown error occurred while fetching skills."
+        );
+      }
+    };
+
+    loadSkills();
+  }, [fetchSkills]);
+
+  useEffect(() => {
+    const loadGoalsAndTrajectory = async () => {
+      try {
+        const goalsAndTrajectoryData = await fetchGoalsAndTrajectory();
+        if (goalsAndTrajectoryData) {
+          setGoalsAndTrajectory(goalsAndTrajectoryData);
+        }
+      } catch (error) {
+        console.error("Error fetching goals and trajectory:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "An unknown error occurred while fetching goals and trajectory."
+        );
+      }
+    };
+    loadGoalsAndTrajectory();
+  }, [fetchGoalsAndTrajectory]);
 
   return (
     <div className="space-y-6">
@@ -116,14 +182,6 @@ export default function PerfilPage() {
               </div>
               <p className="text-lg text-muted-foreground">{`${user?.profile.puesto_actual}`}</p>
               <div className="flex flex-wrap gap-3 pt-1">
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Briefcase className="h-4 w-4" />
-                  <span>{`${user?.roleData.area_responsabilidad}`}</span>
-                </div>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  <span>Madrid, España</span>
-                </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4" />
                   <span>
@@ -177,27 +235,35 @@ export default function PerfilPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" />
-                  Información de Contacto
+                  <GraduationCap className="h-5 w-5 text-primary" />
+                  Cursos
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid gap-2">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Email:</span>
-                    <span className="text-sm">{`${user?.email}`}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Teléfono:</span>
-                    <span className="text-sm">+34 612 345 678</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Ubicación:</span>
-                    <span className="text-sm">Madrid, España</span>
-                  </div>
+                <div className="space-y-3">
+                  {coursesData && coursesData.courses.length > 0 ? (
+                    coursesData.courses.map((course) => (
+                      <div key={course.id_curso} className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm font-medium">
+                            {course.nombre}
+                          </h4>
+                          <span className="text-xs text-muted-foreground">
+                            {course.modalidad}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {course.institucion}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">
+                        No hay cursos disponibles
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -206,22 +272,23 @@ export default function PerfilPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <GraduationCap className="h-5 w-5 text-primary" />
-                  Educación y Certificaciones
+                  Certificaciones
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
-                  {certifications && certifications.length > 0 ? (
-                    certifications.map((cert) => (
-                      <div key={cert.id_certificacion} className="space-y-1">
+                  {certifications &&
+                  certifications.certifications.length > 0 ? (
+                    certifications.certifications.map((cert) => (
+                      <div key={cert.ID_Certificacion} className="space-y-1">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-medium">{cert.nombre}</h4>
+                          <h4 className="text-sm font-medium">{cert.Nombre}</h4>
                           <span className="text-xs text-muted-foreground">
-                            {cert.validez}
+                            {cert.Validez}
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {cert.institucion}
+                          {cert.Institucion}
                         </p>
                       </div>
                     ))
@@ -251,9 +318,9 @@ export default function PerfilPage() {
                   <p>Cargando historial profesional...</p>
                 ) : error ? (
                   <p className="text-red-500">{error}</p>
-                ) : professionalHistory &&
-                  professionalHistory.professionalHistory.length > 0 ? (
-                  professionalHistory.professionalHistory.map(
+                ) : professionalHistoryData &&
+                  professionalHistoryData.professionalHistory.length > 0 ? (
+                  professionalHistoryData.professionalHistory.map(
                     (entry, index) => (
                       <div
                         key={index}
@@ -301,26 +368,28 @@ export default function PerfilPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[
-                    { name: "JavaScript/TypeScript", level: 90 },
-                    { name: "React/Angular", level: 85 },
-                    { name: "Node.js", level: 80 },
-                    { name: "AWS", level: 75 },
-                    { name: "Python", level: 65 },
-                    { name: "DevOps/CI/CD", level: 70 },
-                  ].map((skill, index) => (
-                    <div key={index} className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          {skill.name}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          {skill.level}%
-                        </span>
-                      </div>
-                      <Progress value={skill.level} className="h-2" />
-                    </div>
-                  ))}
+                  {skills && skills.skills.length > 0 ? (
+                    skills.skills
+                      .filter((skill) => skill.categoria === "TECNICA")
+                      .map((skill, index) => (
+                        <div key={index} className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">
+                              {skill.nombre}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              {skill.nivel_demostrado}
+                            </span>
+                          </div>
+                          <Progress
+                            value={skill.nivel_demostrado * 20}
+                            className="h-2"
+                          />
+                        </div>
+                      ))
+                  ) : (
+                    <p>No hay habilidades técnicas disponibles</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -338,26 +407,28 @@ export default function PerfilPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[
-                    { name: "Trabajo en equipo", level: 95 },
-                    { name: "Comunicación", level: 85 },
-                    { name: "Resolución de problemas", level: 90 },
-                    { name: "Liderazgo", level: 75 },
-                    { name: "Gestión del tiempo", level: 80 },
-                    { name: "Adaptabilidad", level: 85 },
-                  ].map((skill, index) => (
-                    <div key={index} className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          {skill.name}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          {skill.level}%
-                        </span>
-                      </div>
-                      <Progress value={skill.level} className="h-2" />
-                    </div>
-                  ))}
+                  {skills && skills.skills.length > 0 ? (
+                    skills.skills
+                      .filter((skill) => skill.categoria === "BLANDA")
+                      .map((skill, index) => (
+                        <div key={index} className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">
+                              {skill.nombre}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              {skill.nivel_demostrado}
+                            </span>
+                          </div>
+                          <Progress
+                            value={skill.nivel_demostrado * 20}
+                            className="h-2"
+                          />
+                        </div>
+                      ))
+                  ) : (
+                    <p>No hay habilidades técnicas disponibles</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -389,169 +460,161 @@ export default function PerfilPage() {
         </TabsContent>
 
         <TabsContent value="metas" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Flag className="h-5 w-5 text-primary" />
-                Plan de Carrera
-              </CardTitle>
-              <CardDescription>
-                Objetivos profesionales y plan de desarrollo a corto y largo
-                plazo
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-8">
-                <div className="relative border-l border-primary pl-6">
-                  <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">
-                        Objetivo a Corto Plazo (6 meses)
-                      </h4>
-                      <Badge className="inline-flex items-center px-3 py-1 whitespace-nowrap bg-emerald-500 text-white">
-                        En progreso
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Obtener certificación en AWS Solutions Architect
-                      Professional y liderar un proyecto de migración a la nube.
-                    </p>
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Progreso</span>
-                        <span className="font-medium">40%</span>
-                      </div>
-                      <Progress value={40} className="h-2" />
-                    </div>
-                    <div className="space-y-1 pt-2">
-                      <p className="text-sm font-medium">Pasos a seguir:</p>
-                      <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                        <li>
-                          Completar curso online de preparación (Completado)
-                        </li>
-                        <li>Realizar laboratorios prácticos (En progreso)</li>
-                        <li>Programar examen de certificación</li>
-                        <li>
-                          Proponer proyecto de migración al equipo directivo
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative border-l border-muted pl-6">
-                  <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-muted" />
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">
-                        Objetivo a Medio Plazo (1-2 años)
-                      </h4>
-                      <Badge
-                        variant="outline"
-                        className="text-muted-foreground"
+          {isLoading ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p>Cargando información de carrera...</p>
+              </CardContent>
+            </Card>
+          ) : error ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-red-500">{error}</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Flag className="h-5 w-5 text-primary" />
+                  Plan de Carrera
+                </CardTitle>
+                <CardDescription>
+                  Objetivos profesionales y plan de desarrollo a corto y largo
+                  plazo
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-8">
+                  {goalsAndTrajectory?.trajectory &&
+                    goalsAndTrajectory.trajectory.map((career, index) => (
+                      <div
+                        key={career.id_trayectoria}
+                        className="relative border-l border-primary pl-6"
                       >
-                        Planificado
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Asumir rol de Arquitecto de Soluciones y liderar un equipo
-                      técnico de al menos 5 personas.
-                    </p>
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Progreso</span>
-                        <span className="font-medium">10%</span>
+                        <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">{career.nombre}</h4>
+                            <Badge
+                              className={`inline-flex items-center px-3 py-1 whitespace-nowrap ${
+                                career.etapa_actual === "Fase inicial"
+                                  ? "bg-blue-500 text-white"
+                                  : career.etapa_actual === "Fase intermedia"
+                                  ? "bg-emerald-500 text-white"
+                                  : "bg-purple-500 text-white"
+                              }`}
+                            >
+                              {career.etapa_actual}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {career.descripcion}
+                          </p>
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span>Progreso</span>
+                              <span className="font-medium">
+                                {parseFloat(career.progreso).toFixed(1)}%
+                              </span>
+                            </div>
+                            <Progress
+                              value={parseFloat(career.progreso)}
+                              className="h-2"
+                            />
+                          </div>
+                          <div className="space-y-1 pt-2">
+                            <p className="text-sm font-medium">
+                              Ruta de Desarrollo:
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {career.roles_secuenciales}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Tiempo estimado: {career.tiempo_estimado} meses
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Fecha de inicio:{" "}
+                              {new Date(career.fecha_inicio).toLocaleDateString(
+                                "es-ES",
+                                {
+                                  day: "2-digit",
+                                  month: "long",
+                                  year: "numeric",
+                                }
+                              )}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <Progress value={10} className="h-2" />
-                    </div>
-                    <div className="space-y-1 pt-2">
-                      <p className="text-sm font-medium">Pasos a seguir:</p>
-                      <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                        <li>
-                          Completar certificaciones avanzadas en arquitectura de
-                          software
-                        </li>
-                        <li>Participar en programa de liderazgo interno</li>
-                        <li>Mentorizar a desarrolladores junior</li>
-                        <li>
-                          Proponer mejoras arquitectónicas en proyectos actuales
-                        </li>
-                      </ul>
-                    </div>
+                    ))}
+
+                  <div className="pt-4">
+                    <h4 className="font-medium mb-4">Metas Profesionales</h4>
+                    {goalsAndTrajectory?.professionalGoals &&
+                    goalsAndTrajectory.professionalGoals.length > 0 ? (
+                      goalsAndTrajectory.professionalGoals.map((goal) => (
+                        <div
+                          key={goal.id_meta}
+                          className="relative border-l border-muted pl-6 pb-6"
+                        >
+                          <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-muted" />
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-medium">
+                                {goal.descripcion}
+                              </h4>
+                              <Badge
+                                variant="outline"
+                                className={`${
+                                  goal.estado === "CANCELADA"
+                                    ? "bg-red-50 text-red-700"
+                                    : goal.estado === "COMPLETADA"
+                                    ? "bg-green-50 text-green-700"
+                                    : "bg-blue-50 text-blue-700"
+                                }`}
+                              >
+                                {goal.estado}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Calendar className="h-4 w-4" />
+                              <span>
+                                Establecida:{" "}
+                                {new Date(
+                                  goal.fecha_establecimiento
+                                ).toLocaleDateString("es-ES", {
+                                  day: "2-digit",
+                                  month: "long",
+                                  year: "numeric",
+                                })}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              Plazo:{" "}
+                              {goal.plazo === "LARGO"
+                                ? "Largo plazo"
+                                : goal.plazo === "MEDIO"
+                                ? "Medio plazo"
+                                : "Corto plazo"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Prioridad: {goal.prioridad}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        No hay metas profesionales definidas.
+                      </p>
+                    )}
                   </div>
                 </div>
-
-                <div className="relative border-l border-muted pl-6">
-                  <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-muted" />
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">
-                        Objetivo a Largo Plazo (3-5 años)
-                      </h4>
-                      <Badge
-                        variant="outline"
-                        className="text-muted-foreground"
-                      >
-                        Planificado
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Alcanzar posición de Director Técnico (CTO) o Director de
-                      Ingeniería, liderando la estrategia tecnológica.
-                    </p>
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Progreso</span>
-                        <span className="font-medium">5%</span>
-                      </div>
-                      <Progress value={5} className="h-2" />
-                    </div>
-                    <div className="space-y-1 pt-2">
-                      <p className="text-sm font-medium">Pasos a seguir:</p>
-                      <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                        <li>
-                          Completar MBA o formación en gestión tecnológica
-                        </li>
-                        <li>Ampliar red de contactos en la industria</li>
-                        <li>Participar en conferencias como ponente</li>
-                        <li>Liderar iniciativas de innovación en la empresa</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-primary" />
-                Áreas de Interés y Desarrollo
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "Arquitectura Cloud",
-                  "Inteligencia Artificial",
-                  "DevOps",
-                  "Seguridad Informática",
-                  "Blockchain",
-                  "Liderazgo Técnico",
-                  "Gestión de Proyectos",
-                  "Microservicios",
-                  "Serverless",
-                  "Big Data",
-                ].map((interest, index) => (
-                  <Badge key={index} variant="outline" className="bg-muted">
-                    {interest}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>

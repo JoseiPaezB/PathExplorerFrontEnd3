@@ -10,7 +10,8 @@ export type Course = {
 export type CourseFormData = {
   id_curso: number;
   fecha_inicio: string;
-  fecha_finalizacion: string;
+  fecha_finalizacion: string | null;
   calificacion: number | null;
   certificado: string;
+  progeso: string | null;
 };

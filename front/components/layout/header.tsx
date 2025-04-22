@@ -32,7 +32,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { User as AuthUser } from "@/types/auth";
 import { useAuth } from "@/contexts/auth-context";
-import PerfilPage from "@/app/(dashboard)/perfil/page";
 
 interface HeaderProps {
   user: AuthUser | null;
