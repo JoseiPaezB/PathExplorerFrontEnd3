@@ -11,6 +11,7 @@ import {
   Flag,
   GraduationCap,
   User,
+  Mail,
 } from "lucide-react";
 
 import {
@@ -176,10 +177,6 @@ export default function PerfilPage() {
               <AvatarFallback className="text-2xl">JD</AvatarFallback>
             </Avatar>
             <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold">{`${user?.nombre} ${user?.apellido}`}</h2>
-                <Badge className="bg-primary">Senior</Badge>
-              </div>
               <p className="text-lg text-muted-foreground">{`${user?.profile.puesto_actual}`}</p>
               <div className="flex flex-wrap gap-3 pt-1">
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -196,6 +193,10 @@ export default function PerfilPage() {
                         }
                       )}
                   </span>
+                </div>
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <Mail className="h-4 w-4" />
+                  <span>{user?.email}</span>
                 </div>
               </div>
             </div>

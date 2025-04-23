@@ -87,8 +87,7 @@ export default function UsuariosPage() {
   };
 
   const navigateToUserState = (user: UserInfoBanca) => {
-    sessionStorage.setItem("selectedUser", JSON.stringify(user));
-    router.push(`/usuarios/${user.id_persona}/editar-estado`);
+    router.push(`/usuarios/${user.id_empleado}/editar-estado`);
   };
 
   return (
@@ -204,7 +203,7 @@ export default function UsuariosPage() {
                         onClick={() => navigateToUserState(user)}
                       >
                         <Edit className="h-4 w-4" />
-                        <span>Modificar</span>
+                        <span>Ver proyecto</span>
                       </Button>
                     </div>
                   </div>
