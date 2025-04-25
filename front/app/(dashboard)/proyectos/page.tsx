@@ -11,7 +11,6 @@ import {
   User,
   X,
   PlusCircle,
-  X,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -71,28 +70,6 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { getEmpleadosBanca } from "@/app/(dashboard)/usuarios/actions";
-import { UserInfoBanca } from "@/types/users";
-
-// == THIS IS A HYBRID TEST (REAL DATA + PLACEHOLDER DATA) == //
-import { getBestCandidatesForRole } from "@/app/(dashboard)/proyectos/actions";
-
-const roleToIdMap: Record<string, number> = {
-  "Desarrollador Frontend": 52,
-  "DevOps Engineer": 22,
-  "Desarrollador Full Stack": 7,
-  "UI/UX Designer": 9,
-  "QA Engineer": 10,
-};
-// == THIS IS A HYBRID TEST (REAL DATA + PLACEHOLDER DATA) == //
 
 export default function ProyectosPage() {
   const [activeTab, setActiveTab] = useState("kanban");
@@ -100,7 +77,6 @@ export default function ProyectosPage() {
   const [selectedProject, setSelectedProject] =
     useState<TransformedProject | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  // Keep these as they are for your displayed data
   interface Role {
     id_rol: number;
     titulo: string;
@@ -108,7 +84,7 @@ export default function ProyectosPage() {
     assignments: Assignment[];
     habilidades?: {
       id_habilidad: number;
-      nombre: string; // Skill name for display
+      nombre: string;
       nivel_minimo_requerido: number;
       importancia: number;
     }[];
@@ -133,7 +109,6 @@ export default function ProyectosPage() {
     description: string;
   }
 
-  // Update these to match your API's expected format
   interface Skill {
     id_habilidad: number;
     nombre: string;
@@ -147,7 +122,6 @@ export default function ProyectosPage() {
     importancia: number;
   }
 
-  // Update your ProjectRole interface to include skills
   interface ProjectRole {
     titulo: string;
     descripcion: string;
@@ -159,9 +133,9 @@ export default function ProyectosPage() {
   interface ProjectFormData {
     nombre: string;
     descripcion: string;
-    fecha_inicio: string; // This will be an ISO date string
-    fecha_fin_estimada: string; // This will be an ISO date string
-    prioridad: number; // Change to number
+    fecha_inicio: string;
+    fecha_fin_estimada: string;
+    prioridad: number;
     roles: ProjectRole[];
   }
 
@@ -191,7 +165,7 @@ export default function ProyectosPage() {
         assignments: Assignment[];
         habilidades?: {
           id_habilidad: number;
-          nombre: string; // Skill name for display
+          nombre: string;
           nivel_minimo_requerido: number;
           importancia: number;
         }[];
@@ -204,10 +178,8 @@ export default function ProyectosPage() {
 
       try {
         setLoading(true);
-        // Get the JWT token from localStorage or your auth context
         const token = localStorage.getItem("token");
 
-        // Make API call to fetch manager projects
         const response = await axios.get(
           "http://localhost:4000/api/projects/manager-projects-with-roles",
           {
@@ -216,33 +188,19 @@ export default function ProyectosPage() {
             },
           }
         );
-        const userInfoRaw = localStorage.getItem("user");
-        console.log("All localStorage keys:", Object.keys(localStorage));
         const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
-        console.log("Raw userInfo from localStorage:", userInfoRaw);
-        console.log("Parsed userInfo:", userInfo);
         const managerName =
           userInfo.nombre && userInfo.apellido
             ? `${userInfo.nombre} ${userInfo.apellido}`
             : "Gerente Actual";
 
         if (response.data.success && response.data.hasProjects) {
-          // Transform the backend data to match the frontend format
           const transformedProjects = response.data.managerProjects.map(
             (project: Project) => {
-              // Calculate progress based on project status or other metrics
-              console.log(
-                `Project ${project.nombre} roles with skills:`,
-                project.roles.map((r) => ({
-                  titulo: r.titulo,
-                  habilidades: r.habilidades,
-                }))
-              );
               let progress = 0;
               if (project.estado === "Completado") {
                 progress = 100;
               } else if (project.estado === "En progreso") {
-                // You could calculate this based on dates or other metrics
                 const startDate = new Date(project.fecha_inicio);
                 const endDate = new Date(project.fecha_fin_estimada);
                 const today = new Date();
@@ -256,7 +214,6 @@ export default function ProyectosPage() {
                 );
               }
 
-              // Get the first assignment for each role (if any)
               const assignedPersons = project.roles.flatMap((role) =>
                 role.assignments.map((assignment) => ({
                   roleTitulo: role.titulo,
@@ -464,34 +421,27 @@ export default function ProyectosPage() {
         // Get the JWT token
         const token = localStorage.getItem("token");
 
-        // Add the current user as manager
         const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
         const projectData = {
           nombre: formData.nombre,
           descripcion: formData.descripcion,
           fecha_inicio: formData.fecha_inicio,
           fecha_fin_estimada: formData.fecha_fin_estimada,
-          prioridad: formData.prioridad, // Already numeric
+          prioridad: formData.prioridad,
           id_manager: userInfo.id_persona,
           roles: formData.roles.map((role) => ({
             titulo: role.titulo,
             descripcion: role.descripcion,
-            importancia: role.importancia, // Already numeric
-            nivel_experiencia_requerido: role.nivel_experiencia_requerido, // Already numeric
+            importancia: role.importancia,
+            nivel_experiencia_requerido: role.nivel_experiencia_requerido,
             habilidades: role.habilidades.map((skill) => ({
               id_habilidad: skill.id_habilidad,
-              nivel_minimo_requerido: skill.nivel_minimo_requerido, // Already numeric
-              importancia: skill.importancia, // Already numeric
+              nivel_minimo_requerido: skill.nivel_minimo_requerido,
+              importancia: skill.importancia,
             })),
           })),
         };
 
-        console.log(
-          "Sending data to API:",
-          JSON.stringify(projectData, null, 2)
-        );
-
-        // Make API call to create project
         const response = await axios.post(
           "http://localhost:4000/api/projects/create-project",
           projectData,
@@ -503,7 +453,6 @@ export default function ProyectosPage() {
         );
 
         if (response.data.success) {
-          // Call the onSuccess callback to close dialog and refresh list
           onSuccess();
         } else {
           setError(response.data.message || "Error al crear el proyecto");
@@ -896,109 +845,6 @@ export default function ProyectosPage() {
   if (loading)
     return <div className="p-4 text-center">Cargando proyectos...</div>;
   if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
-  const [showAssignDialog, setShowAssignDialog] = useState(false);
-  const [currentProject, setCurrentProject] = useState("");
-  const [currentRole, setCurrentRole] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [empleadosBanca, setEmpleadosBanca] = useState<UserInfoBanca[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // == THIS IS A HYBRID TEST (REAL DATA + PLACEHOLDER DATA) == //
-  const handleAssignClick = async (
-    project: string,
-    role: string,
-    roleId?: number
-  ) => {
-    setCurrentProject(project);
-    setCurrentRole(role);
-    setLoading(true);
-    setShowAssignDialog(true);
-
-    try {
-      const token = localStorage.getItem("token");
-      // Usar el roleId pasado como parámetro o buscar en el mapa como fallback
-      const actualRoleId = roleId || roleToIdMap[role] || 0;
-
-      if (actualRoleId === 0) {
-        console.error(`No se encontró ID para el rol: ${role}`);
-        return;
-      }
-
-      console.log(`Obteniendo candidatos para el rol ID: ${actualRoleId}`);
-
-      const response = await getBestCandidatesForRole(
-        actualRoleId,
-        token || ""
-      );
-      if (response.success && response.candidates) {
-        setEmpleadosBanca(response.candidates);
-      } else {
-        console.error("Error al obtener candidatos:", response.message);
-        // Si falla, intentamos fallback a todos los empleados en banca
-        const backupResponse = await getEmpleadosBanca(token || "");
-        if (backupResponse.success && backupResponse.employees) {
-          const employeesArray = Array.isArray(backupResponse.employees)
-            ? backupResponse.employees
-            : [backupResponse.employees];
-
-          setEmpleadosBanca(employeesArray);
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  // == THIS IS A HYBRID TEST (REAL DATA + PLACEHOLDER DATA) == //
-
-  const closeAssignDialog = () => {
-    setShowAssignDialog(false);
-    setCurrentProject("");
-    setCurrentRole("");
-    setSearchTerm("");
-  };
-
-  const assignEmployee = (empleado: UserInfoBanca) => {
-    // Aquí se implementaría la lógica para asignar el empleado al rol
-    // Por ahora solo se cierra el diálogo
-    console.log(
-      `Asignando a ${empleado.nombre} ${empleado.apellido} al rol ${currentRole} en el proyecto ${currentProject}`
-    );
-    setSelectedEmployee(empleado);
-    setShowConfirmDialog(true);
-  };
-
-  const filteredEmpleados = empleadosBanca.filter((empleado) => {
-    const nombreCompleto = empleado.nombre_completo || "";
-    const puesto = empleado.puesto_actual || "";
-
-    return (
-      nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      puesto.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
-
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] =
-    useState<UserInfoBanca | null>(null);
-
-  // Añade esta función para confirmar la asignación
-  const confirmAssignment = () => {
-    // Aquí se implementará la lógica real para asignar el empleado al rol
-    console.log(
-      `Asignando a ${selectedEmployee?.nombre || ""} ${
-        selectedEmployee?.apellido || ""
-      } al rol ${currentRole} en el proyecto ${currentProject}`
-    );
-    closeConfirmDialog();
-    closeAssignDialog();
-  };
-
-  const closeConfirmDialog = () => {
-    setShowConfirmDialog(false);
-    setSelectedEmployee(null);
-  };
 
   return (
     <div className="space-y-6">
@@ -1134,13 +980,6 @@ export default function ProyectosPage() {
                   <Button
                     size="sm"
                     className="h-8 bg-primary hover:bg-primary/90"
-                    onClick={() =>
-                      handleAssignClick(
-                        "Sistema CRM",
-                        "Desarrollador Frontend",
-                        52
-                      )
-                    }
                   >
                     Asignar
                   </Button>
@@ -1200,13 +1039,6 @@ export default function ProyectosPage() {
                   <Button
                     size="sm"
                     className="h-8 bg-primary hover:bg-primary/90"
-                    onClick={() =>
-                      handleAssignClick(
-                        "Migración a la Nube",
-                        "DevOps Engineer",
-                        22
-                      )
-                    }
                   >
                     Asignar
                   </Button>
@@ -1450,109 +1282,6 @@ export default function ProyectosPage() {
                 No hay proyectos para mostrar.
               </div>
             )}
-            {[
-              // == THIS IS A HYBRID TEST (REAL DATA + PLACEHOLDER DATA) == //
-              {
-                project: "Sistema CRM",
-                role: "Desarrollador Frontend",
-                roleId: 52,
-                status: "Pendiente",
-                assignedTo: null,
-                startDate: "15/04/2025",
-                endDate: "15/07/2025",
-                progress: 0,
-              },
-              {
-                project: "App Móvil Banca",
-                role: "Desarrollador Full Stack",
-                roleId: 7,
-                status: "En progreso",
-                assignedTo: "Juan Díaz",
-                startDate: "10/02/2025",
-                endDate: "30/06/2025",
-                progress: 40,
-              },
-              {
-                project: "Portal de Clientes",
-                role: "UI/UX Designer",
-                roleId: 9,
-                status: "En progreso",
-                assignedTo: "María Rodríguez",
-                startDate: "05/01/2025",
-                endDate: "10/04/2025",
-                progress: 85,
-              },
-              {
-                project: "Migración a la Nube",
-                role: "DevOps Engineer",
-                roleId: 22,
-                status: "Completado",
-                assignedTo: "Pedro Sánchez",
-                startDate: "10/07/2024",
-                endDate: "10/01/2025",
-                progress: 100,
-              },
-              // == THIS IS A HYBRID TEST (REAL DATA + PLACEHOLDER DATA) == //
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-8 gap-4 border-t p-4 text-sm items-center"
-              >
-                <div className="col-span-2">
-                  <p className="font-medium">{item.project}</p>
-                  <p className="text-muted-foreground">{item.role}</p>
-                </div>
-                <div>
-                  <Badge
-                    variant="outline"
-                    className={
-                      item.status === "Pendiente"
-                        ? "bg-yellow-50 text-yellow-700"
-                        : item.status === "En progreso"
-                        ? "bg-green-50 text-green-700"
-                        : "bg-gray-50 text-gray-700"
-                    }
-                  >
-                    {item.status}
-                  </Badge>
-                </div>
-                <div>
-                  {item.assignedTo ? (
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage
-                          src="/placeholder.svg?height=24&width=24"
-                          alt={item.assignedTo}
-                        />
-                        <AvatarFallback>
-                          {item.assignedTo
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span>{item.assignedTo}</span>
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground">Sin asignar</span>
-                  )}
-                </div>
-                <div>{item.startDate}</div>
-                <div>{item.endDate}</div>
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Progreso</span>
-                    <span>{item.progress}%</span>
-                  </div>
-                  <Progress value={item.progress} className="h-2" />
-                </div>
-                <div>
-                  <Button variant="ghost" size="sm" className="h-8">
-                    Ver detalles
-                  </Button>
-                </div>
-              </div>
-            ))}
           </div>
         </TabsContent>
 
@@ -1604,157 +1333,6 @@ export default function ProyectosPage() {
             >
               Cancelar
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Diálogo de asignación de empleados */}
-      <Dialog open={showAssignDialog} onOpenChange={closeAssignDialog}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Asignar empleado a rol</DialogTitle>
-            <DialogDescription>
-              Selecciona un empleado para el rol {currentRole} en el proyecto{" "}
-              {currentProject}
-            </DialogDescription>
-          </DialogHeader>
-
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <div className="text-center">
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Cargando empleados disponibles...
-                </p>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="relative mb-4">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Buscar empleados..."
-                  className="w-full rounded-md border border-input bg-white pl-8 text-sm"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-
-              <div className="max-h-[300px] overflow-y-auto">
-                {filteredEmpleados.length > 0 ? (
-                  filteredEmpleados
-                    .sort((a, b) => {
-                      // Extraer solo el número del porcentaje para ordenar
-                      const matchA = a.porcentaje_match
-                        ? parseFloat(
-                            String(a.porcentaje_match).replace("%", "")
-                          )
-                        : 0;
-                      const matchB = b.porcentaje_match
-                        ? parseFloat(
-                            String(b.porcentaje_match).replace("%", "")
-                          )
-                        : 0;
-                      return matchB - matchA; // Ordenar por mayor porcentaje
-                    })
-                    .map((empleado) => {
-                      const nombreEmpleado =
-                        empleado.nombre_completo || "Sin nombre";
-                      // Generar iniciales para avatar
-                      const iniciales = nombreEmpleado
-                        .split(" ")
-                        .map((parte) => parte[0])
-                        .join("")
-                        .substring(0, 2)
-                        .toUpperCase();
-
-                      return (
-                        <div
-                          key={empleado.id_empleado}
-                          className="mb-2 rounded-md border p-3 hover:bg-muted cursor-pointer"
-                          onClick={() => assignEmployee(empleado)}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-10 w-10">
-                                <AvatarFallback>{iniciales}</AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <h4 className="font-medium">
-                                  {nombreEmpleado}
-                                </h4>
-                                <p className="text-sm text-muted-foreground">
-                                  {empleado.puesto_actual || "Sin puesto"}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <Badge
-                                variant="outline"
-                                className={
-                                  empleado.porcentaje_match &&
-                                  empleado.porcentaje_match >= 80
-                                    ? "bg-green-50 text-green-700"
-                                    : empleado.porcentaje_match &&
-                                      empleado.porcentaje_match >= 70
-                                    ? "bg-blue-50 text-blue-700"
-                                    : "bg-yellow-50 text-yellow-700"
-                                }
-                              >
-                                {empleado.porcentaje_match || "0%"}
-                              </Badge>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                Disponibilidad:{" "}
-                                {empleado.porcentaje_disponibilidad || "0%"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-8">
-                    <User className="h-10 w-10 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-medium">
-                      No hay empleados disponibles
-                    </h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      No se encontraron empleados que coincidan con la búsqueda.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-
-          <DialogFooter className="sm:justify-end">
-            <Button variant="outline" onClick={closeAssignDialog}>
-              Cancelar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showConfirmDialog} onOpenChange={closeConfirmDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Confirmar asignación</DialogTitle>
-            <DialogDescription>
-              ¿Estás seguro de que deseas asignar a{" "}
-              {selectedEmployee
-                ? selectedEmployee.nombre && selectedEmployee.apellido
-                  ? `${selectedEmployee.nombre} ${selectedEmployee.apellido}`
-                  : selectedEmployee.nombre_completo || "Sin nombre"
-                : ""}
-              al rol {currentRole} en el proyecto {currentProject}?
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter className="sm:justify-end">
-            <Button variant="outline" onClick={closeConfirmDialog}>
-              Cancelar
-            </Button>
-            <Button onClick={confirmAssignment}>Confirmar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
