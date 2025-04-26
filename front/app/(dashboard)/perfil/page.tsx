@@ -434,30 +434,6 @@ export default function PerfilPage() {
               </CardContent>
             </Card>
           </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-primary" />
-                Gráfico de Competencias
-              </CardTitle>
-              <CardDescription>
-                Visualización de habilidades técnicas y blandas en formato radar
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex h-80 items-center justify-center">
-                <div className="text-center">
-                  <div className="mb-4 rounded-full bg-primary/10 p-4">
-                    <GraduationCap className="h-8 w-8 text-primary" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    El gráfico de radar de habilidades se visualizará aquí
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
 
         <TabsContent value="metas" className="space-y-4">

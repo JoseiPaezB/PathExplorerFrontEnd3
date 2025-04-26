@@ -6,7 +6,6 @@ interface AuthHeader {
   };
 }
 
-// Get the JWT token from localStorage
 const getAuthHeader = (): AxiosRequestConfig => {
   const token = localStorage.getItem("token");
   return {
@@ -16,14 +15,11 @@ const getAuthHeader = (): AxiosRequestConfig => {
   };
 };
 
-// User project and role response type (adjust fields based on API)
 interface UserProjectRole {
   projectId: string;
   role: string;
-  // Agrega otros campos según la respuesta real
 }
 
-// Fetch a user's project and role
 export const getUserProjectAndRole = async (
   id_empleado: string
 ): Promise<UserProjectRole> => {
@@ -40,15 +36,13 @@ export const getUserProjectAndRole = async (
   }
 };
 
-// Manager projects response type (adjust fields based on API)
 interface ManagerProject {
   id: string;
   name: string;
   roles: string[];
-  assignments: any[]; // Ajusta según el contenido
+  assignments: any[];
 }
 
-// Fetch projects for a manager with roles and assignments
 export const getManagerProjects = async (): Promise<ManagerProject[]> => {
   try {
     const response = await axios.get<ManagerProject[]>(
@@ -62,8 +56,6 @@ export const getManagerProjects = async (): Promise<ManagerProject[]> => {
   }
 };
 
-// Project creation input and response types (customize based on your data model)
-// Project creation input type
 interface CreateProjectData {
   nombre: string;
   descripcion: string;
@@ -86,11 +78,8 @@ interface CreateProjectData {
 interface CreatedProjectResponse {
   id: string;
   name: string;
-  // Otros campos según respuesta
 }
 
-// Create a new project
-// Create a new project
 export const createProject = async (
   projectData: CreateProjectData
 ): Promise<any> => {
@@ -107,7 +96,6 @@ export const createProject = async (
   }
 };
 
-// Function to calculate project progress based on start and end dates
 export const calculateProjectProgress = (
   startDate: string,
   endDate: string,
@@ -121,7 +109,7 @@ export const calculateProjectProgress = (
   const today = new Date();
 
   if (today < start) return 0;
-  if (today > end) return 99; // Not 100% unless marked as completed
+  if (today > end) return 99;
 
   const totalDuration = end.getTime() - start.getTime();
   const elapsed = today.getTime() - start.getTime();
@@ -129,7 +117,6 @@ export const calculateProjectProgress = (
   return Math.round((elapsed / totalDuration) * 100);
 };
 
-// Format date to local format
 export const formatDate = (dateString?: string): string => {
   if (!dateString) return "N/A";
   const date = new Date(dateString);
@@ -140,7 +127,6 @@ export const formatDate = (dateString?: string): string => {
   });
 };
 
-// Skill type definition
 interface Skill {
   id_habilidad: number;
   nombre: string;
@@ -148,7 +134,6 @@ interface Skill {
   descripcion?: string;
 }
 
-// Fetch all available skills
 export const getAllSkills = async (): Promise<Skill[]> => {
   try {
     const response = await axios.get<{ success: boolean; skills: Skill[] }>(
