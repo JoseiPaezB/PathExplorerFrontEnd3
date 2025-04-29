@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { useGetManagerProjects } from "@/hooks/useGetManagerProjects";
 import { useGetBestCandidates } from "@/hooks/fetchGetBestCandidatesForRole";
+import { fetchGetAllAdministradores } from "@/hooks/fetchGetAllAdministradores";
+import { useCreateSolicitud } from "@/hooks/useCreateSolicitud";
 import ProjectDetailsModal from "@/components/proyectos/ProjectDetailsModal";
 import PageHeader from "@/components/proyectos/PageHeader";
 import NewProjectForm from "@/components/proyectos/NewProjectForm";
@@ -57,6 +59,8 @@ export default function ProyectosPage() {
     error: candidatesError,
     fetchCandidatesForRole,
   } = useGetBestCandidates();
+  const { createSolicitud } = useCreateSolicitud();
+  const { administrador } = fetchGetAllAdministradores();
 
   const determineUrgency = (role: Role) => {
     const hasHighImportanceSkill = role.habilidades?.some(
@@ -218,6 +222,8 @@ export default function ProyectosPage() {
         closeAssignDialog={closeAssignDialog}
         setShowConfirmDialog={setShowConfirmDialog}
         onSuccess={() => refreshProjects()}
+        createSolicitud={createSolicitud}
+        administrators={administrador}
       />
     </div>
   );
