@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import AddRoleDialog from "./AddRoleDialog";
 import NewProjectDialog from "./NewProjectDialog";
 import { Button } from "@/components/ui/button";
+import { apiUrl } from "@/constants";
 
 function NewProjectForm({ onSuccess }: { onSuccess: () => void }) {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -104,14 +105,11 @@ function NewProjectForm({ onSuccess }: { onSuccess: () => void }) {
         setLoadingSkills(true);
         const token = localStorage.getItem("token");
 
-        const response = await axios.get(
-          "http://localhost:4000/api/projects/all-skills",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/projects/all-skills`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (response.data.success) {
           setSkills(response.data.skills);
@@ -187,7 +185,7 @@ function NewProjectForm({ onSuccess }: { onSuccess: () => void }) {
       };
 
       const response = await axios.post(
-        "http://localhost:4000/api/projects/create-project",
+        `${apiUrl}/projects/create-project`,
         projectData,
         {
           headers: {
@@ -203,7 +201,7 @@ function NewProjectForm({ onSuccess }: { onSuccess: () => void }) {
           try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-              "http://localhost:4000/api/projects/manager-projects-with-roles",
+              `${apiUrl}/projects/manager-projects-with-roles`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

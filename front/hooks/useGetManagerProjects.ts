@@ -6,6 +6,7 @@ import {
   Role,
   RolesByStatus,
 } from "@/types/projectsAdministration";
+import { apiUrl } from "@/constants";
 
 export function useGetManagerProjects() {
   const [projects, setProjects] = useState<TransformedProject[]>([]);
@@ -22,7 +23,7 @@ export function useGetManagerProjects() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:4000/api/projects/manager-projects-with-roles",
+        `${apiUrl}/projects/manager-projects-with-roles`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

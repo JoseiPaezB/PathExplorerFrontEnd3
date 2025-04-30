@@ -20,7 +20,6 @@ import DropdownFilter from "@/components/proyectos/DropdownFilter";
 import ProjectsList from "@/components/proyectos/ProjectsList";
 import PendingRoles from "@/components/proyectos/PendingRoles";
 import AssignedRoles from "@/components/proyectos/AssignedRoles";
-import FinishedRoles from "@/components/proyectos/FinishedRoles";
 import AssignEmployeeDialog from "@/components/proyectos/AssignEmployeeDialog";
 import ConfirmationDialog from "@/components/proyectos/ConfirmationDialog";
 
@@ -52,6 +51,7 @@ export default function ProyectosPage() {
 
   const { projects, rolesByStatus, loading, error, refreshProjects } =
     useGetManagerProjects();
+  console.log(rolesByStatus);
 
   const {
     candidates: empleadosBanca,
@@ -136,14 +136,13 @@ export default function ProyectosPage() {
         </TabsList>
 
         <TabsContent value="kanban" className="space-y-4">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <PendingRoles
               rolesByStatus={rolesByStatus}
               determineUrgency={determineUrgency}
               handleAssignClick={handleAssignClick}
             />
             <AssignedRoles rolesByStatus={rolesByStatus} />
-            <FinishedRoles rolesByStatus={rolesByStatus} />
           </div>
         </TabsContent>
 

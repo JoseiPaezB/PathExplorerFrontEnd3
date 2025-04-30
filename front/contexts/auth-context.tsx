@@ -21,6 +21,7 @@ import type {
   UserTrajectoryResponse,
 } from "@/types/users";
 import type { NotificationResponse } from "@/types/notificaciones";
+import { apiUrl } from "@/constants";
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<User | void>;
@@ -36,8 +37,6 @@ interface AuthContextType extends AuthState {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const API_URL = "http://localhost:4000/api";
 
 const setCookie = (name: string, value: string, days: number = 7) => {
   const date = new Date();
@@ -125,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (email: string, password: string): Promise<User | void> => {
       try {
         const response = await axios.post<LoginResponse>(
-          `${API_URL}/auth/login`,
+          `${apiUrl}/auth/login`,
           {
             email,
             password,
@@ -183,7 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const response = await axios.get<CoursesUserResponse>(
-        `${API_URL}/auth/courses`,
+        `${apiUrl}/auth/courses`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -223,7 +222,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         const response = await axios.get<CertificationsUserResponse>(
-          `${API_URL}/auth/certifications`,
+          `${apiUrl}/auth/certifications`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -260,7 +259,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           throw new Error("Session expired. Please login again.");
         }
         const response = await axios.get<ProfessionalHistory>(
-          `${API_URL}/auth/professional-history`,
+          `${apiUrl}/auth/professional-history`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -296,7 +295,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Session expired. Please login again.");
       }
       const response = await axios.get<SkillsResponse>(
-        `${API_URL}/auth/skills`,
+        `${apiUrl}/auth/skills`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -332,7 +331,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           throw new Error("Session expired. Please login again.");
         }
         const response = await axios.get<UserTrajectoryResponse>(
-          `${API_URL}/auth/trajectory-and-goals`,
+          `${apiUrl}/auth/trajectory-and-goals`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -369,7 +368,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           throw new Error("Session expired. Please login again.");
         }
         const response = await axios.get<NotificationResponse>(
-          `${API_URL}/notifications/user-notifications`,
+          `${apiUrl}/notifications/user-notifications`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -409,7 +408,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         const response = await axios.patch(
-          `${API_URL}/auth/update`,
+          `${apiUrl}/auth/update`,
           profileData,
           {
             headers: {
