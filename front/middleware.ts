@@ -65,7 +65,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
       }
     } else if (role === "manager") {
-      const managerRoutes = ["/proyectos", "/equipo", "/analitica"];
+      const managerRoutes = ["/proyectos", "/analitica"];
       if (managerRoutes.some((route) => path === route)) {
         return NextResponse.next();
       }

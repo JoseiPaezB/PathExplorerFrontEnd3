@@ -61,7 +61,6 @@ export function Sidebar({
     ],
     manager: [
       { title: "Gestión de Proyectos", href: "/proyectos", icon: Briefcase },
-      { title: "Equipo", href: "/equipo", icon: Users },
     ],
     administrador: [
       { title: "Gestión de Usuarios", href: "/usuarios", icon: Users },
