@@ -135,11 +135,7 @@ function Page() {
         ) : showRecommendations ? (
           isLoadingRecommendations ? (
             <div className="flex justify-center py-8">
-              <LoadingSpinner
-                size="md"
-                color="primary"
-                text="Cargando recomendaciones..."
-              />
+              Cargando recomendaciones...
             </div>
           ) : trayectories && trayectories.length > 0 ? (
             <div>
