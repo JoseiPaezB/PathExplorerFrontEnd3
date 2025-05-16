@@ -10,6 +10,7 @@ import {
   User,
   Users,
   FileCheck,
+  Info,
   Bell,
   Settings,
   TrendingUp,
@@ -76,6 +77,7 @@ export function Sidebar({
     administrador: [
       { title: "Gestión de Usuarios", href: "/usuarios", icon: Users },
       { title: "Autorizaciones", href: "/autorizaciones", icon: FileCheck },
+      { title: "Informes", href: "/informes", icon: Info },
     ],
   };
 
