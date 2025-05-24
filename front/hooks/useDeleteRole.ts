@@ -8,7 +8,7 @@ export function useDeleteRole() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const deleteRole = async (id_rol: number, reason: string): Promise<any> => {
+  const deleteRole = async (id_rol: number, mensaje: string): Promise<any> => {
     try {
       setIsDeleting(true);
       setError(null);
@@ -25,7 +25,7 @@ export function useDeleteRole() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          data: { id_rol, reason },
+          data: { id_rol, mensaje },
         }
       );
       return response.data;
