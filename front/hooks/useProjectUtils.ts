@@ -32,8 +32,8 @@ export function useProjectUtils() {
     });
   };
 
-  const formatDateForApi = (displayDate: string | null): string | null => {
-    if (!displayDate) return null;
+  const formatDateForApi = (displayDate: string): string => {
+    if (!displayDate) return "";
 
     if (/^\d{4}-\d{2}-\d{2}$/.test(displayDate)) {
       return displayDate;
@@ -43,7 +43,7 @@ export function useProjectUtils() {
       const parts = displayDate.split("/");
       if (parts.length !== 3) {
         console.error("Invalid date format:", displayDate);
-        return null;
+        return "";
       }
 
       const day = parts[0].padStart(2, "0");
@@ -53,7 +53,7 @@ export function useProjectUtils() {
       return `${year}-${month}-${day}`;
     } catch (error) {
       console.error("Error formatting date:", error);
-      return null;
+      return "";
     }
   };
 

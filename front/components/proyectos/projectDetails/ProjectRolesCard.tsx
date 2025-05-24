@@ -4,24 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useProjectUtils } from "@/hooks/useProjectUtils";
+import { Role } from "@/types/projectsAdministration";
 
-interface ProjectRole {
-  titulo: string;
-  descripcion: string;
-  assignments?: { nombre: string; apellido: string }[];
-  skills?: {
-    id_habilidad: number;
-    nombre: string;
-    nivel_minimo_requerido: number;
-    importancia: number;
-  }[];
-}
-
-interface ProjectRolesCardProps {
-  roles: ProjectRole[];
-}
-
-export default function ProjectRolesCard({ roles }: ProjectRolesCardProps) {
+export default function ProjectRolesCard({ roles }: { roles: Role[] }) {
   const { getBadgeImportance } = useProjectUtils();
 
   const getInitials = (name: string) => {
@@ -44,7 +29,7 @@ export default function ProjectRolesCard({ roles }: ProjectRolesCardProps) {
         {roles.map((role, index) => (
           <div key={index} className="border-b pb-3 last:border-0 last:pb-0">
             <h4 className="font-medium">{role.titulo}</h4>
-            <p className="text-sm text-gray-600 mt-1">{role.descripcion}</p>
+            <p className="text-sm text-gray-600 mt-1">{role.description}</p>
 
             {role.skills && role.skills.length > 0 && (
               <div className="mt-2">

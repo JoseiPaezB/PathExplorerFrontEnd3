@@ -1,6 +1,5 @@
 "use client";
 
-import { PlusCircle, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,195 +10,216 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EditableProject } from "@/types/projectsAdministration";
-import { fetchGetAllSkills } from "@/hooks/fetchGetAllSkills";
+import { TransformedProject } from "@/types/projectsAdministration";
 
 interface ProjectEditFormProps {
-  editedProject: EditableProject | null;
+  editedProject: TransformedProject | null;
   handleChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
+  ) => void;
+  handleRoleChange: (
+    roleIndex: number,
+    field: string,
+    value: string | number
+  ) => void;
+  handleSkillChange: (
+    roleIndex: number,
+    skillIndex: number,
+    field: string,
+    value: string | number
   ) => void;
 }
 
 export default function ProjectEditForm({
   editedProject,
   handleChange,
+  handleRoleChange,
+  handleSkillChange,
 }: ProjectEditFormProps) {
-  const { skills, isLoading } = fetchGetAllSkills();
+  if (!editedProject) return null;
+
   return (
     <div className="space-y-4 pt-4">
       <div className="space-y-1">
-        <label className="block text-sm text-gray-600" htmlFor="projectName">
-          Nombre del Proyecto
-        </label>
-        <input
+        <Label htmlFor="projectName">Nombre del Proyecto</Label>
+        <Input
           type="text"
           id="projectName"
           name="project"
-          value={editedProject?.project || ""}
+          value={editedProject.project || ""}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
         />
       </div>
 
       <div className="space-y-1">
-        <label className="block text-sm text-gray-600" htmlFor="description">
-          Descripción
-        </label>
-        <textarea
+        <Label htmlFor="description">Descripción</Label>
+        <Textarea
           id="description"
           name="description"
-          value={editedProject?.description || ""}
+          value={editedProject.description}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md min-h-[100px]"
+          className="min-h-[100px]"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <label className="block text-sm text-gray-600" htmlFor="startDate">
-            Fecha Inicio
-          </label>
-          <input
+          <Label htmlFor="startDate">Fecha Inicio</Label>
+          <Input
             type="date"
             id="startDate"
             name="startDate"
-            value={editedProject?.startDate || ""}
+            value={editedProject.startDate}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm text-gray-600" htmlFor="endDate">
-            Fecha Fin Estimada
-          </label>
-          <input
+          <Label htmlFor="endDate">Fecha Fin Estimada</Label>
+          <Input
             type="date"
             id="endDate"
             name="endDate"
-            value={editedProject?.endDate || ""}
+            value={editedProject.endDate}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>
       </div>
 
       <div className="space-y-1">
-        <label className="block text-sm text-gray-600" htmlFor="priority">
-          Prioridad
-        </label>
-        <select
-          id="priority"
-          name="priority"
-          value={editedProject?.priority || ""}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+        <Label htmlFor="priority">Prioridad</Label>
+        <Select
+          value={editedProject.prioridad?.toString() || "3"}
+          onValueChange={(value) => {
+            const event = {
+              target: { name: "priority", value },
+            } as React.ChangeEvent<HTMLSelectElement>;
+            handleChange(event);
+          }}
         >
-          <option value="1">Baja</option>
-          <option value="3">Media</option>
-          <option value="5">Alta</option>
-        </select>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecciona prioridad" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1">Baja</SelectItem>
+            <SelectItem value="3">Media</SelectItem>
+            <SelectItem value="5">Alta</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <div className="pt-4 border-t mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium">Roles del Proyecto</h3>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1"
-          >
-            <PlusCircle className="h-4 w-4" />
-            Añadir Rol
-          </Button>
-        </div>
 
-        {editedProject?.allRoles?.length === 0 ? (
-          <div className="text-center p-4 bg-gray-50 rounded-md">
-            <p className="text-sm text-gray-500">
-              No hay roles definidos. Añade al menos un rol para este proyecto.
-            </p>
-          </div>
-        ) : (
+      {editedProject.allRoles && editedProject.allRoles.length > 0 && (
+        <div className="pt-4 border-t mt-6">
+          <h3 className="text-lg font-medium mb-4">Roles del Proyecto</h3>
+
           <div className="space-y-4">
-            {editedProject?.allRoles?.map((role, index) => (
-              <Card key={index} className="relative">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-2 top-2 text-red-500 hover:text-red-700 hover:bg-red-50 h-7 w-7 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-
+            {editedProject.allRoles.map((role, roleIndex) => (
+              <Card key={role.id_rol}>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Rol #{index + 1}</CardTitle>
+                  <CardTitle className="text-base">
+                    Rol #{roleIndex + 1}
+                  </CardTitle>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor={`role-title-${index}`}>
+                      <Label htmlFor={`role-title-${roleIndex}`}>
                         Título del Rol
                       </Label>
                       <Input
-                        id={`role-title-${index}`}
-                        value={role.titulo}
+                        id={`role-title-${roleIndex}`}
+                        value={role.titulo || ""}
+                        onChange={(e) =>
+                          handleRoleChange(roleIndex, "titulo", e.target.value)
+                        }
                         placeholder="Ej: Desarrollador Frontend"
-                        required
                       />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor={`role-exp-${roleIndex}`}>
+                        Nivel de Experiencia
+                      </Label>
+                      <Select
+                        value={
+                          role.nivel_experiencia_requerido?.toString() || "1"
+                        }
+                        onValueChange={(value) =>
+                          handleRoleChange(
+                            roleIndex,
+                            "nivel_experiencia_requerido",
+                            parseInt(value)
+                          )
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Nivel" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">Junior (1)</SelectItem>
+                          <SelectItem value="2">Semi-Senior (2)</SelectItem>
+                          <SelectItem value="3">Senior (3)</SelectItem>
+                          <SelectItem value="4">Lead (4)</SelectItem>
+                          <SelectItem value="5">Expert (5)</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor={`role-desc-${index}`}>
+                    <Label htmlFor={`role-desc-${roleIndex}`}>
                       Descripción del Rol
                     </Label>
                     <Textarea
-                      id={`role-desc-${index}`}
+                      id={`role-desc-${roleIndex}`}
                       value={role.descripcion}
+                      onChange={(e) =>
+                        handleRoleChange(
+                          roleIndex,
+                          "description",
+                          e.target.value
+                        )
+                      }
                       placeholder="Describe las responsabilidades de este rol"
                       rows={2}
-                      required
                     />
                   </div>
-                  <div className="space-y-2 mt-4">
-                    <div className="flex justify-between items-center">
-                      <Label>Habilidades requeridas</Label>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-1"
-                      >
-                        <PlusCircle className="h-4 w-4" />
-                        Añadir Habilidad
-                      </Button>
-                    </div>
 
-                    {role.skills?.length === 0 ? (
-                      <div className="text-center p-2 bg-gray-50 rounded-md">
-                        <p className="text-xs text-gray-500">
-                          No hay habilidades definidas.
-                        </p>
-                      </div>
-                    ) : (
+                  {role.skills && role.skills.length > 0 && (
+                    <div className="space-y-2 mt-4">
+                      <Label>Habilidades requeridas</Label>
+
                       <div className="space-y-2">
-                        {role.skills?.map((skill, skillIndex) => (
+                        {role.skills.map((skill, skillIndex) => (
                           <div
-                            key={skillIndex}
-                            className="grid grid-cols-12 gap-2 items-center p-2 rounded-md bg-gray-50"
+                            key={`${role.id_rol}-${skillIndex}`}
+                            className="grid grid-cols-12 gap-2 items-center p-3 rounded-md bg-gray-50"
                           >
+                            <div className="col-span-5">
+                              <Label className="text-xs text-gray-600">
+                                {skill.nombre}
+                              </Label>
+                            </div>
+
                             <div className="col-span-3">
                               <Label className="text-xs">Nivel mínimo</Label>
                               <Select
-                                value={skill.nivel_minimo_requerido.toString()}
+                                value={
+                                  skill.nivel_minimo_requerido?.toString() ||
+                                  "1"
+                                }
+                                onValueChange={(value) =>
+                                  handleSkillChange(
+                                    roleIndex,
+                                    skillIndex,
+                                    "nivel_minimo_requerido",
+                                    parseInt(value)
+                                  )
+                                }
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Nivel" />
@@ -214,41 +234,42 @@ export default function ProjectEditForm({
                               </Select>
                             </div>
 
-                            <div className="col-span-3">
+                            <div className="col-span-4">
                               <Label className="text-xs">Importancia</Label>
-                              <Select value={skill.importancia.toString()}>
+                              <Select
+                                value={skill.importancia?.toString()}
+                                onValueChange={(value) =>
+                                  handleSkillChange(
+                                    roleIndex,
+                                    skillIndex,
+                                    "importancia",
+                                    parseInt(value)
+                                  )
+                                }
+                              >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Importancia" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="1">Baja</SelectItem>
-                                  <SelectItem value="3">Media</SelectItem>
-                                  <SelectItem value="5">Alta</SelectItem>
+                                  <SelectItem value="1">1</SelectItem>
+                                  <SelectItem value="2">2</SelectItem>
+                                  <SelectItem value="3">3</SelectItem>
+                                  <SelectItem value="4">4</SelectItem>
+                                  <SelectItem value="5">5</SelectItem>
                                 </SelectContent>
                               </Select>
-                            </div>
-
-                            <div className="col-span-2 flex justify-end">
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
                             </div>
                           </div>
                         ))}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

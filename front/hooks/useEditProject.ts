@@ -3,25 +3,16 @@
 import { useState } from "react";
 import axios from "axios";
 import { apiUrl } from "@/constants";
-
-interface EditProjectData {
-  id_proyecto: number;
-  nombre: string;
-  descripcion: string;
-  fecha_inicio: string | null;
-  fecha_fin_estimada: string | null;
-  prioridad: number;
-  estado: string;
-}
+import { ProjectFormData } from "@/types/projectsAdministration";
 
 export function useEditProject() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [updatedProject, setUpdatedProject] = useState<EditProjectData | null>(
+  const [updatedProject, setUpdatedProject] = useState<ProjectFormData | null>(
     null
   );
 
-  const editProject = async (projectData: EditProjectData): Promise<any> => {
+  const editProject = async (projectData: ProjectFormData): Promise<any> => {
     try {
       setIsLoading(true);
       setError(null);

@@ -130,7 +130,7 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
     }
   };
 
-  function formatDateForApi(displayDate: string | null) {
+  function formatDateForApi(displayDate: string) {
     if (!displayDate) return null;
 
     if (/^\d{4}-\d{2}-\d{2}$/.test(displayDate)) {
@@ -205,21 +205,6 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
     }
   };
 
-  const getImportanceText = (importance: number) => {
-    switch (importance) {
-      case 1:
-        return "Baja";
-      case 3:
-        return "Media";
-      case 5:
-        return "Alta";
-      case 7:
-        return "Crítica";
-      default:
-        return "Media";
-    }
-  };
-
   const getInitials = (name: string) => {
     if (!name) return "?";
     return name
@@ -265,7 +250,6 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
 
         <ScrollArea className="h-[60vh] pr-4">
           <div className="space-y-4">
-            {/* Manager and Status - Always visible */}
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-gray-600">
@@ -296,14 +280,13 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
             </div>
 
             {isEditMode ? (
-              // Edit Mode Form
               <div className="space-y-4 pt-4">
                 <div className="space-y-1">
                   <label
                     className="block text-sm text-gray-600"
                     htmlFor="projectName"
                   >
-                    Nombre del Proyecto
+                    Nombre del Proyectooooo
                   </label>
                   <input
                     type="text"

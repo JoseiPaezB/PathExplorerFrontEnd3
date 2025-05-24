@@ -55,14 +55,13 @@ export default function ProyectosPage() {
   const {
     candidates: empleadosBanca,
     isLoading: loadingCandidates,
-    error: candidatesError,
     fetchCandidatesForRole,
   } = useGetBestCandidates();
   const { createSolicitud } = useCreateSolicitud();
   const { administrador } = fetchGetAllAdministradores();
 
   const determineUrgency = (role: Role) => {
-    const hasHighImportanceSkill = role.habilidades?.some(
+    const hasHighImportanceSkill = role.skills?.some(
       (skill) => skill.importancia > 3
     );
 
@@ -159,21 +158,7 @@ export default function ProyectosPage() {
         <ProjectDetailsModal
           isOpen={isDetailsModalOpen}
           onClose={() => setIsDetailsModalOpen(false)}
-          project={{
-            id: selectedProject.id,
-            project: selectedProject.project,
-            startDate: selectedProject.startDate,
-            endDate: selectedProject.endDate,
-            status: selectedProject.status,
-            description: selectedProject.description,
-            allRoles: selectedProject.allRoles,
-          }}
-          manager={{
-            name: selectedProject.managerName || "Gerente del Proyecto",
-          }}
-          onProjectUpdated={() => {
-            refreshProjects();
-          }}
+          project={selectedProject}
         />
       )}
 
