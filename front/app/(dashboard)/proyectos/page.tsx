@@ -23,6 +23,7 @@ import AssignedRoles from "@/components/proyectos/AssignedRoles";
 import AssignEmployeeDialog from "@/components/proyectos/AssignEmployeeDialog";
 import ConfirmationDialog from "@/components/proyectos/ConfirmationDialog";
 import AddNewRoleDialog from "@/components/proyectos/AddNewRoleDialog";
+import DeleteRoleDialog from "@/components/proyectos/DeleteRoleDialog";
 
 import {
   UserInfoBanca,
@@ -52,6 +53,8 @@ export default function ProyectosPage() {
   const [showAddRoleDialog, setShowAddRoleDialog] = useState(false);
   const [projectForNewRole, setProjectForNewRole] =
     useState<TransformedProject | null>(null);
+  const [showDeleteRoleDialog, setShowDeleteRoleDialog] = useState(false);
+  const [roleToDelete, setRoleToDelete] = useState<Role | null>(null);
 
   const { projects, rolesByStatus, loading, error, refreshProjects } =
     useGetManagerProjects();
@@ -63,6 +66,11 @@ export default function ProyectosPage() {
   } = useGetBestCandidates();
   const { createSolicitud } = useCreateSolicitud();
   const { administrador } = fetchGetAllAdministradores();
+
+  const handleDeleteClick = (role: Role) => {
+    setRoleToDelete(role);
+    setShowDeleteRoleDialog(true);
+  };
 
   const determineUrgency = (role: Role) => {
     const hasHighImportanceSkill = role.skills?.some(
@@ -148,6 +156,7 @@ export default function ProyectosPage() {
               rolesByStatus={rolesByStatus}
               determineUrgency={determineUrgency}
               handleAssignClick={handleAssignClick}
+              handleDeleteClick={handleDeleteClick}
             />
             <AssignedRoles rolesByStatus={rolesByStatus} />
           </div>
@@ -229,6 +238,19 @@ export default function ProyectosPage() {
         onSuccess={() => {
           setShowAddRoleDialog(false);
           setProjectForNewRole(null);
+          refreshProjects();
+        }}
+      />
+      <DeleteRoleDialog
+        isOpen={showDeleteRoleDialog}
+        onClose={() => {
+          setShowDeleteRoleDialog(false);
+          setRoleToDelete(null);
+        }}
+        role={roleToDelete}
+        onSuccess={() => {
+          setShowDeleteRoleDialog(false);
+          setRoleToDelete(null);
           refreshProjects();
         }}
       />

@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -12,15 +12,19 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/functions";
 import { RolesByStatus, Role } from "@/types/projectsAdministration";
 
+interface PendingRolesProps {
+  rolesByStatus: RolesByStatus;
+  determineUrgency: (role: Role) => string;
+  handleAssignClick: (project: string, role: string, roleId?: number) => void;
+  handleDeleteClick?: (role: Role) => void;
+}
+
 function PendingRoles({
   rolesByStatus,
   determineUrgency,
   handleAssignClick,
-}: {
-  rolesByStatus: RolesByStatus;
-  determineUrgency: (role: Role) => string;
-  handleAssignClick: (project: string, role: string, roleId?: number) => void;
-}) {
+  handleDeleteClick,
+}: PendingRolesProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -93,6 +97,15 @@ function PendingRoles({
               >
                 Asignar
               </Button>
+              {handleDeleteClick && (
+                <Button
+                  size="sm"
+                  className="h-8 bg-primary hover:bg-primary/90"
+                  onClick={() => handleDeleteClick(role)}
+                >
+                  Borrar
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))
