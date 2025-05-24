@@ -4,13 +4,12 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditProject } from "@/hooks/useEditProject";
-import { useProjectUtils } from "@/hooks/useProjectUtils";
 import {
   ProjectDetailsProps,
   ProjectFormData,
   TransformedProject,
 } from "@/types/projectsAdministration";
-
+import { formatDateForApi, parsePriority } from "@/lib/functions";
 import ProjectDetailsHeader from "@/components/proyectos/projectDetails/ProjectDetailsHeader";
 import ProjectMetaInfo from "@/components/proyectos/projectDetails/ProjectMetaInfo";
 import ProjectEditForm from "@/components/proyectos/projectDetails/ProjectEditForm";
@@ -30,7 +29,6 @@ const ProjectDetailsModal: React.FC<ProjectDetailsProps> = ({
   const [isEditMode, setIsEditMode] = useState(false);
 
   const { editProject } = useEditProject();
-  const { parsePriority, formatDateForApi } = useProjectUtils();
 
   useEffect(() => {
     if (project) {

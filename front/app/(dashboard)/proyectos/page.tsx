@@ -22,6 +22,7 @@ import PendingRoles from "@/components/proyectos/PendingRoles";
 import AssignedRoles from "@/components/proyectos/AssignedRoles";
 import AssignEmployeeDialog from "@/components/proyectos/AssignEmployeeDialog";
 import ConfirmationDialog from "@/components/proyectos/ConfirmationDialog";
+import AddNewRoleDialog from "@/components/proyectos/AddNewRoleDialog";
 
 import {
   UserInfoBanca,
@@ -48,6 +49,9 @@ export default function ProyectosPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedEmployee, setSelectedEmployee] =
     useState<UserInfoBanca | null>(null);
+  const [showAddRoleDialog, setShowAddRoleDialog] = useState(false);
+  const [projectForNewRole, setProjectForNewRole] =
+    useState<TransformedProject | null>(null);
 
   const { projects, rolesByStatus, loading, error, refreshProjects } =
     useGetManagerProjects();
@@ -75,6 +79,11 @@ export default function ProyectosPage() {
     } else {
       return "Baja";
     }
+  };
+
+  const handleAddRole = (project: TransformedProject) => {
+    setProjectForNewRole(project);
+    setShowAddRoleDialog(true);
   };
 
   const handleAssignClick = async (
@@ -150,6 +159,7 @@ export default function ProyectosPage() {
             filteredProjects={filteredProjects}
             setSelectedProject={setSelectedProject}
             setIsDetailsModalOpen={setIsDetailsModalOpen}
+            onAddRole={handleAddRole}
           />
         </TabsContent>
       </Tabs>
@@ -207,6 +217,20 @@ export default function ProyectosPage() {
         onSuccess={() => refreshProjects()}
         createSolicitud={createSolicitud}
         administrators={administrador}
+      />
+
+      <AddNewRoleDialog
+        isOpen={showAddRoleDialog}
+        onClose={() => {
+          setShowAddRoleDialog(false);
+          setProjectForNewRole(null);
+        }}
+        project={projectForNewRole}
+        onSuccess={() => {
+          setShowAddRoleDialog(false);
+          setProjectForNewRole(null);
+          refreshProjects();
+        }}
       />
     </div>
   );

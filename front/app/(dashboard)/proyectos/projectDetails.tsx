@@ -14,6 +14,13 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { CalendarIcon, InfoIcon, UserIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { editProject } from "./projectService";
+import {
+  formatDateForApi,
+  parsePriority,
+  getBadgeImportance,
+  getBadgeColor,
+  getInitials,
+} from "@/lib/functions";
 
 interface EditableProject {
   id: number;
@@ -130,88 +137,9 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
     }
   };
 
-  function formatDateForApi(displayDate: string) {
-    if (!displayDate) return null;
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(displayDate)) {
-      return displayDate;
-    }
-
-    try {
-      const parts = displayDate.split("/");
-      if (parts.length !== 3) {
-        console.error("Invalid date format:", displayDate);
-        return null;
-      }
-
-      const day = parts[0].padStart(2, "0");
-      const month = parts[1].padStart(2, "0");
-      const year = parts[2];
-
-      return `${year}-${month}-${day}`;
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return null;
-    }
-  }
-
-  function parsePriority(priority: number | string | undefined) {
-    if (typeof priority === "number" && !isNaN(priority)) {
-      return priority;
-    }
-
-    if (typeof priority === "string" && !isNaN(Number(priority))) {
-      return Number(priority);
-    }
-
-    return 3;
-  }
-
   const toggleEditMode = () => {
     const newMode = !isEditMode;
     setIsEditMode(newMode);
-  };
-
-  const getBadgeColor = (status: string) => {
-    switch (status) {
-      case "Pendiente":
-      case "PLANEACION":
-        return "bg-yellow-50 text-yellow-700";
-      case "En progreso":
-      case "ACTIVO":
-        return "bg-green-50 text-green-700";
-      case "Completado":
-        return "bg-blue-50 text-blue-700";
-      default:
-        return "bg-gray-50 text-gray-700";
-    }
-  };
-
-  const getBadgeImportance = (importance: number | string) => {
-    switch (importance) {
-      case "Baja":
-      case 1:
-      case 2:
-        return "bg-green-100 text-green-800 text-xs";
-      case "Media":
-      case 3:
-      case 4:
-        return "bg-yellow-100 text-yellow-800 text-xs";
-      case "Alta":
-      case 5:
-        return "bg-red-100 text-red-800 text-xs";
-      default:
-        return "bg-gray-100 text-gray-800 text-xs";
-    }
-  };
-
-  const getInitials = (name: string) => {
-    if (!name) return "?";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
   };
 
   return (
@@ -286,7 +214,7 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
                     className="block text-sm text-gray-600"
                     htmlFor="projectName"
                   >
-                    Nombre del Proyectooooo
+                    Nombre del Proyecto
                   </label>
                   <input
                     type="text"
@@ -371,7 +299,6 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
                 </div>
               </div>
             ) : (
-              // View Mode
               <div className="space-y-4 pt-4">
                 <Card>
                   <CardHeader className="pb-2">
