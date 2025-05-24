@@ -38,11 +38,12 @@ export interface Skill {
   id_habilidad: number;
   nombre: string;
   categoria: string;
-  descripcion?: string;
+  descripcion: string;
 }
 
 export interface RoleSkill {
   id_habilidad: number;
+  nombre?: string;
   nivel_minimo_requerido: number;
   importancia: number;
 }
@@ -103,6 +104,13 @@ export interface EditableProject {
   }[];
 }
 
+export interface Assignments {
+  id_empleado: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+}
+
 export interface ProjectDetailsProps {
   isOpen: boolean;
   onClose: () => void;
@@ -115,13 +123,17 @@ export interface ProjectDetailsProps {
     description: string;
     allRoles: {
       titulo: string;
+      id_rol: number;
       descripcion: string;
-      assignments?: { nombre: string; apellido: string }[];
+      nivel_experiencia_requerido: number;
+      assignments?: Assignments[];
       skills?: {
         id_habilidad: number;
         nombre: string;
         nivel_minimo_requerido: number;
         importancia: number;
+        categoria: string;
+        descripcion: string;
       }[];
     }[];
   } | null;
