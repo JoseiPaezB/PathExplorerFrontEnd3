@@ -124,17 +124,42 @@ function NewProjectForm({ onSuccess }: { onSuccess: () => void }) {
     fetchSkills();
   }, []);
 
-  const addSkillToRole = (roleIndex: number) => {
-    const updatedRoles = [...formData.roles];
-    if (skills.length > 0) {
-      updatedRoles[roleIndex].habilidades.push({
-        id_habilidad: skills[0].id_habilidad,
-        nombre: skills[0].nombre,
-        nivel_minimo_requerido: 3,
-        importancia: 3,
-      });
-      setFormData((prev) => ({ ...prev, roles: updatedRoles }));
+  const addSkillToRole = (
+    roleIndex: number,
+    skillData?: {
+      id_habilidad: number;
+      nombre: string;
+      nivel_minimo_requerido: number;
+      importancia: number;
     }
+  ) => {
+    const updatedRoles = [...formData.roles];
+
+    if (skillData) {
+      const exists = updatedRoles[roleIndex].habilidades.some(
+        (h) => h.id_habilidad === skillData.id_habilidad
+      );
+      if (exists) return;
+
+      updatedRoles[roleIndex].habilidades.push(skillData);
+    } else {
+      if (skills.length > 0) {
+        const firstSkill = skills[0];
+        const exists = updatedRoles[roleIndex].habilidades.some(
+          (h) => h.id_habilidad === firstSkill.id_habilidad
+        );
+        if (exists) return;
+
+        updatedRoles[roleIndex].habilidades.push({
+          id_habilidad: firstSkill.id_habilidad,
+          nombre: firstSkill.nombre,
+          nivel_minimo_requerido: 3,
+          importancia: 3,
+        });
+      }
+    }
+
+    setFormData((prev) => ({ ...prev, roles: updatedRoles }));
   };
 
   const updateSkill = (
