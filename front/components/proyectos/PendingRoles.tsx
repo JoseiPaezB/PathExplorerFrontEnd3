@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/functions";
-import { RolesByStatus, Role } from "@/types/projectsAdministration";
+import { Role } from "@/types/projectsAdministration";
 
 interface PendingRolesProps {
-  rolesByStatus: RolesByStatus;
+  rolesByStatus: any;
   determineUrgency: (role: Role) => string;
   handleAssignClick: (project: string, role: string, roleId?: number) => void;
   handleDeleteClick?: (role: Role) => void;
@@ -35,7 +35,7 @@ function PendingRoles({
       </div>
 
       {rolesByStatus.pendientes.length > 0 ? (
-        rolesByStatus.pendientes.map((role) => (
+        rolesByStatus.pendientes.map((role: any) => (
           <Card
             key={role.id_rol}
             className={`border-l-4 ${

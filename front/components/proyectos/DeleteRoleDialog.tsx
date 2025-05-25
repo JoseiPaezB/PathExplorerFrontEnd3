@@ -14,12 +14,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useDeleteRole } from "@/hooks/useDeleteRole";
-import { Role } from "@/types/projectsAdministration";
 
 interface DeleteRoleDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  role: Role | null;
+  role: any;
   onSuccess: () => void;
 }
 
