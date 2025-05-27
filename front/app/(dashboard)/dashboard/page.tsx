@@ -8,6 +8,7 @@ import ManagerDashboard from "@/components/dashboard/ManagerDashboard";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+
 const ShimmerCard = () => (
   <div className="rounded-xl border border-border/50 bg-card/50 shadow-sm overflow-hidden">
     <div className="p-6 space-y-4">
@@ -66,13 +67,13 @@ export default function DashboardPage() {
         <AlertTriangle className="h-16 w-16 text-amber-500" />
         <h2 className="text-2xl font-bold">Cargando información del usuario</h2>
         <p className="text-muted-foreground text-center max-w-md">
-          Estamos determinando tu rol en el sistema. Si este mensaje persiste,
-          por favor contacta al soporte.
+          Estamos determinando tu rol en el sistema. Si este mensaje persiste, por favor contacta al soporte.
         </p>
         <Button onClick={() => window.location.reload()}>Reintentar</Button>
       </div>
     );
   }
+
 
   return isManager === true ? (
     <ManagerDashboard userName={user?.nombre || "Usuario"} />
@@ -83,8 +84,7 @@ export default function DashboardPage() {
       <AlertTriangle className="h-16 w-16 text-amber-500" />
       <h2 className="text-2xl font-bold">Error al determinar rol</h2>
       <p className="text-muted-foreground text-center max-w-md">
-        No pudimos determinar tu rol en el sistema. Por favor, contacta al
-        soporte.
+        No pudimos determinar tu rol en el sistema. Por favor, contacta al soporte.
       </p>
       <Button onClick={() => window.location.reload()}>Reintentar</Button>
     </div>

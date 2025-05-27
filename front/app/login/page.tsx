@@ -83,6 +83,8 @@ export default function LoginPage() {
       const loggedInUser = await login(email, password);
       setSuccess(true);
 
+
+      const redirectPath = loggedInUser ? getRedirectPath(loggedInUser.role) : "/dashboard";
       const redirectPath = loggedInUser
         ? getRedirectPath(loggedInUser.role)
         : "/dashboard";

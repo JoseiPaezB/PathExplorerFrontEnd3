@@ -112,7 +112,6 @@ interface Project {
   roles: (ProjectRole | null)[];
 }
 
-// Employee dashboard data structure
 interface EmployeeDashboardData {
   teamMembers: TeamMember[];
   courses: Course[];
@@ -121,7 +120,6 @@ interface EmployeeDashboardData {
   employeeProyect: EmployeeProject[];
 }
 
-// Manager dashboard data structure
 interface ManagerDashboardData {
   rolesWithoutAssignments: Project[];
   courses: Course[];
@@ -129,10 +127,8 @@ interface ManagerDashboardData {
   skills: Skill[];
 }
 
-// Union type for dashboard data
 type DashboardData = EmployeeDashboardData | ManagerDashboardData;
 
-// Type guard functions to check which type of dashboard data we have
 function isManagerData(data: DashboardData): data is ManagerDashboardData {
   return "rolesWithoutAssignments" in data;
 }
@@ -234,7 +230,6 @@ export const useManagerDashboard = (): {
     skills: [],
   };
 
-  // Only return actual data if we have data AND it's the manager structure
   const managerData =
     data && "rolesWithoutAssignments" in data ? data : emptyManagerData;
 
