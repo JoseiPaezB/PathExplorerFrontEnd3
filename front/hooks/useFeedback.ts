@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import { apiUrl } from "@/constants";
 
-// Types
 interface Evaluacion {
   id_evaluacion: number;
   id_empleado: number;
@@ -24,7 +24,7 @@ interface TeamMember {
 
 interface ProjectTeam {
   proyecto: string;
-  id_proyecto: number; // Make this REQUIRED if your backend will always provide it now
+  id_proyecto: number;
   integrantes: TeamMember | TeamMember[];
 }
 
@@ -53,27 +53,24 @@ const useFeedback = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Get auth token from localStorage
   const getAuthToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token') || '';
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("token") || "";
     }
-    return '';
+    return "";
   };
 
-  // Base fetch function with auth headers
   const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
     const token = getAuthToken();
-    
-    // Add the base URL to your API endpoints
-    const baseURL = 'http://localhost:4000';
-    const fullURL = url.startsWith('http') ? url : `${baseURL}${url}`;
-    
+
+    const baseURL = apiUrl;
+    const fullURL = url.startsWith("http") ? url : `${baseURL}${url}`;
+
     const response = await fetch(fullURL, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
         ...options.headers,
       },
     });
@@ -90,11 +87,17 @@ const useFeedback = () => {
     setLoading(true);
     setError(null);
     try {
-      const data: EvaluacionesResponse = await fetchWithAuth('/api/feedback/manager');
+      const data: EvaluacionesResponse = await fetchWithAuth(
+        "/api/feedback/manager"
+      );
       setEvaluaciones(data.evaluaciones);
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching manager evaluaciones');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Error fetching manager evaluaciones"
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -106,11 +109,17 @@ const useFeedback = () => {
     setLoading(true);
     setError(null);
     try {
-      const data: EvaluacionesResponse = await fetchWithAuth('/api/feedback/empleado');
+      const data: EvaluacionesResponse = await fetchWithAuth(
+        "/api/feedback/empleado"
+      );
       setEvaluaciones(data.evaluaciones);
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching empleado evaluaciones');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Error fetching empleado evaluaciones"
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -122,11 +131,15 @@ const useFeedback = () => {
     setLoading(true);
     setError(null);
     try {
-      const data: EvaluacionesResponse = await fetchWithAuth('/api/feedback/administrador');
+      const data: EvaluacionesResponse = await fetchWithAuth(
+        "/api/feedback/administrador"
+      );
       setEvaluaciones(data.evaluaciones);
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching admin evaluaciones');
+      setError(
+        err instanceof Error ? err.message : "Error fetching admin evaluaciones"
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -138,13 +151,15 @@ const useFeedback = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchWithAuth('/api/feedback/create', {
-        method: 'POST',
+      const data = await fetchWithAuth("/api/feedback/create", {
+        method: "POST",
         body: JSON.stringify(evaluacionData),
       });
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creating evaluacion');
+      setError(
+        err instanceof Error ? err.message : "Error creating evaluacion"
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -156,11 +171,13 @@ const useFeedback = () => {
     setLoading(true);
     setError(null);
     try {
-      const data: TeamResponse = await fetchWithAuth('/api/feedback/team-and-members');
+      const data: TeamResponse = await fetchWithAuth(
+        "/api/feedback/team-and-members"
+      );
       setTeamData(data.equipos);
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching team data');
+      setError(err instanceof Error ? err.message : "Error fetching team data");
       throw err;
     } finally {
       setLoading(false);
@@ -176,7 +193,7 @@ const useFeedback = () => {
     teamData,
     loading,
     error,
-    
+
     // Actions
     getEvaluacionesManager,
     getEvaluacionesEmpleado,
@@ -184,7 +201,7 @@ const useFeedback = () => {
     createEvaluacion,
     getTeamAndMembers,
     clearError,
-    
+
     // Setters for manual state updates
     setEvaluaciones,
     setTeamData,

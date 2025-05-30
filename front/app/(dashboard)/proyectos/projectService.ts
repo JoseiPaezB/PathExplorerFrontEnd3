@@ -1,10 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-
-interface AuthHeader {
-  headers: {
-    Authorization: string;
-  };
-}
+import { apiUrl } from "@/constants";
 
 const getAuthHeader = (): AxiosRequestConfig => {
   const token = localStorage.getItem("token");
@@ -25,7 +20,7 @@ export const getUserProjectAndRole = async (
 ): Promise<UserProjectRole> => {
   try {
     const response = await axios.post<UserProjectRole>(
-      "http://localhost:4000/api/projects/user-projects-with-roles",
+      `${apiUrl}/projects/user-projects-with-roles`,
       { id_empleado },
       getAuthHeader()
     );
@@ -46,7 +41,7 @@ interface ManagerProject {
 export const getManagerProjects = async (): Promise<ManagerProject[]> => {
   try {
     const response = await axios.get<ManagerProject[]>(
-      "http://localhost:4000/api/projects/manager-projects-with-roles",
+      `${apiUrl}/projects/manager-projects-with-roles`,
       getAuthHeader()
     );
     return response.data;
@@ -80,7 +75,7 @@ export const createProject = async (
 ): Promise<any> => {
   try {
     const response = await axios.post(
-      "http://localhost:4000/api/projects/create-project",
+      `${apiUrl}/projects/create-project`,
       projectData,
       getAuthHeader()
     );
@@ -132,7 +127,7 @@ interface Skill {
 export const getAllSkills = async (): Promise<Skill[]> => {
   try {
     const response = await axios.get<{ success: boolean; skills: Skill[] }>(
-      "http://localhost:4000/api/projects/all-skills",
+      `${apiUrl}/projects/all-skills`,
       getAuthHeader()
     );
 
@@ -148,7 +143,7 @@ export const getAllSkills = async (): Promise<Skill[]> => {
 export const editProject = async (projectData: any) => {
   try {
     const response = await axios.patch(
-      "http://localhost:4000/api/projects/edit-project",
+      `${apiUrl}/projects/edit-project`,
       projectData,
       {
         headers: {
