@@ -93,6 +93,7 @@ export function middleware(request: NextRequest) {
         "/cursos-y-certificaciones/agregar-certificacion",
         "/cursos-y-certificaciones/agregar-curso",
         "/trayectoria",
+        "/recomendaciones",
       ];
 
       if (empleadoStaticRoutes.some((route) => path === route)) {
