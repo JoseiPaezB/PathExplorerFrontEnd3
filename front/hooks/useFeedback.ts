@@ -82,13 +82,12 @@ const useFeedback = () => {
     return response.json();
   };
 
-  // Get evaluaciones for manager
   const getEvaluacionesManager = async () => {
     setLoading(true);
     setError(null);
     try {
       const data: EvaluacionesResponse = await fetchWithAuth(
-        "/api/feedback/manager"
+        `/feedback/manager`
       );
       setEvaluaciones(data.evaluaciones);
       return data;
@@ -104,13 +103,12 @@ const useFeedback = () => {
     }
   };
 
-  // Get evaluaciones for empleado
   const getEvaluacionesEmpleado = async () => {
     setLoading(true);
     setError(null);
     try {
       const data: EvaluacionesResponse = await fetchWithAuth(
-        "/api/feedback/empleado"
+        `/feedback/empleado`
       );
       setEvaluaciones(data.evaluaciones);
       return data;
@@ -126,13 +124,12 @@ const useFeedback = () => {
     }
   };
 
-  // Get evaluaciones for administrador
   const getEvaluacionesAdministrador = async () => {
     setLoading(true);
     setError(null);
     try {
       const data: EvaluacionesResponse = await fetchWithAuth(
-        "/api/feedback/administrador"
+        `/feedback/administrador`
       );
       setEvaluaciones(data.evaluaciones);
       return data;
@@ -146,12 +143,11 @@ const useFeedback = () => {
     }
   };
 
-  // Create new evaluacion
   const createEvaluacion = async (evaluacionData: CreateEvaluacionData) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchWithAuth("/api/feedback/create", {
+      const data = await fetchWithAuth(`/feedback/create`, {
         method: "POST",
         body: JSON.stringify(evaluacionData),
       });
@@ -166,13 +162,12 @@ const useFeedback = () => {
     }
   };
 
-  // Get team and projects data
   const getTeamAndMembers = async () => {
     setLoading(true);
     setError(null);
     try {
       const data: TeamResponse = await fetchWithAuth(
-        "/api/feedback/team-and-members"
+        `/feedback/team-and-members`
       );
       setTeamData(data.equipos);
       return data;
@@ -184,29 +179,22 @@ const useFeedback = () => {
     }
   };
 
-  // Clear error
   const clearError = () => setError(null);
 
   return {
-    // State
     evaluaciones,
     teamData,
     loading,
     error,
-
-    // Actions
     getEvaluacionesManager,
     getEvaluacionesEmpleado,
     getEvaluacionesAdministrador,
     createEvaluacion,
     getTeamAndMembers,
     clearError,
-
-    // Setters for manual state updates
     setEvaluaciones,
     setTeamData,
   };
 };
 
-// IMPORTANT: Make sure to export as default
 export default useFeedback;
