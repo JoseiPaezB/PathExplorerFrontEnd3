@@ -340,16 +340,16 @@ const getProjectOptions = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Calificación (0-10)
+                      Calificación (1-10)
                     </label>
                     <input
                       type="number"
                       name="calificacion"
                       value={formData.calificacion}
                       onChange={handleInputChange}
-                      min="0"
+                      min="1"
                       max="10"
-                      step="0.1"
+                      step="1"
                       required
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
