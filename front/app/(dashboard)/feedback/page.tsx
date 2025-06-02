@@ -41,7 +41,7 @@ export default function FeedbackPage() {
     id_empleado: 0,
     fecha: new Date().toISOString().split('T')[0],
     areas_mejora: '',
-    calificacion: 0,
+    calificacion: 1,
     id_proyecto: 0, // We'll use this to filter employees
     comentarios: '',
     fortalezas: ''
