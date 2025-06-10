@@ -232,367 +232,394 @@ export default function FeedbackPage() {
     );
   }
 
-  return (
-    <div className="max-w-6xl mx-auto p-6 bg-white">
-      {userRole === "manager" && (
-        <>
-          <div className="mb-8">
-            <DeleteFeedbackModal
-              isOpen={!!deletingId}
-              onClose={() => setDeletingId(null)}
-              handleDelete={handleDeleteEvaluation}
-              isDeleting={isDeleting}
-              id_evaluacion={deletingId || undefined}
-            />
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {userRole === "manager"
-                ? "Gestión de Evaluaciones"
-                : "Administración de Evaluaciones"}
-            </h1>
-            <p className="text-gray-600">
-              {userRole === "manager"
-                ? "Administra las evaluaciones de desempeño de tu equipo"
-                : "Gestiona todas las evaluaciones del sistema"}
-            </p>
-          </div>
+ return (
+  <div className="max-w-6xl mx-auto p-6">
+    {userRole === "manager" && (
+      <>
+        <div className="mb-8">
+          <DeleteFeedbackModal
+            isOpen={!!deletingId}
+            onClose={() => setDeletingId(null)}
+            handleDelete={handleDeleteEvaluation}
+            isDeleting={isDeleting}
+            id_evaluacion={deletingId || undefined}
+          />
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            {userRole === "manager"
+              ? "Gestión de Evaluaciones"
+              : "Administración de Evaluaciones"}
+          </h1>
+          <p className="text-muted-foreground">
+            {userRole === "manager"
+              ? "Administra las evaluaciones de desempeño de tu equipo"
+              : "Gestiona todas las evaluaciones del sistema"}
+          </p>
+        </div>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              <div className="flex justify-between items-center">
-                <span>{error}</span>
+        {error && (
+          <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg">
+            <div className="flex justify-between items-center">
+              <span>{error}</span>
+              <button
+                onClick={clearError}
+                className="text-destructive hover:text-destructive/80 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="mb-6 flex gap-4">
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl font-medium"
+          >
+            {showCreateForm ? "Cancelar" : "Nueva Evaluación"}
+          </button>
+        </div>
+
+        {showCreateForm && (
+          <div className="mb-8 p-6 rounded-xl border border-border bg-card shadow-lg">
+            <h2 className="text-xl font-semibold mb-6 text-card-foreground">
+              Crear Nueva Evaluación
+            </h2>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Proyecto
+                  </label>
+                  <select
+                    name="id_proyecto"
+                    value={formData.id_proyecto}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-input text-foreground transition-all duration-200"
+                  >
+                    <option value={0}>Seleccionar proyecto</option>
+                    {getProjectOptions().map((proj) => (
+                      <option key={proj.id} value={proj.id}>
+                        {proj.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Empleado
+                  </label>
+                  <select
+                    name="id_empleado"
+                    value={formData.id_empleado}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-input text-foreground transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={formData.id_proyecto === 0}
+                  >
+                    <option value={0}>
+                      {formData.id_proyecto === 0
+                        ? "Selecciona un proyecto primero"
+                        : "Seleccionar empleado"}
+                    </option>
+                    {getEmployeeOptions().map((emp) => (
+                      <option key={emp.id} value={emp.id}>
+                        {emp.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Fecha
+                  </label>
+                  <input
+                    type="date"
+                    name="fecha"
+                    value={formData.fecha}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-input text-foreground transition-all duration-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Calificación (1-10)
+                  </label>
+                  <input
+                    type="number"
+                    name="calificacion"
+                    value={formData.calificacion}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="10"
+                    step="1"
+                    required
+                    className="w-full p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-input text-foreground transition-all duration-200"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Fortalezas
+                </label>
+                <textarea
+                  name="fortalezas"
+                  value={formData.fortalezas}
+                  onChange={handleInputChange}
+                  required
+                  rows={3}
+                  className="w-full p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-input text-foreground placeholder:text-muted-foreground transition-all duration-200"
+                  placeholder="Describe las fortalezas del empleado..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Áreas de Mejora
+                </label>
+                <textarea
+                  name="areas_mejora"
+                  value={formData.areas_mejora}
+                  onChange={handleInputChange}
+                  required
+                  rows={3}
+                  className="w-full p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-input text-foreground placeholder:text-muted-foreground transition-all duration-200"
+                  placeholder="Describe las áreas que necesitan mejora..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Comentarios Adicionales
+                </label>
+                <textarea
+                  name="comentarios"
+                  value={formData.comentarios}
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="w-full p-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-input text-foreground placeholder:text-muted-foreground transition-all duration-200"
+                  placeholder="Comentarios adicionales sobre el desempeño..."
+                />
+              </div>
+
+              <div className="flex gap-4 pt-4">
                 <button
-                  onClick={clearError}
-                  className="text-red-500 hover:text-red-700"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="bg-success hover:bg-success/90 text-success-foreground px-6 py-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg hover:shadow-xl"
                 >
-                  ✕
+                  {loading ? "Creando..." : "Crear Evaluación"}
+                </button>
+                <button
+                  onClick={() => setShowCreateForm(false)}
+                  className="bg-muted hover:bg-muted/80 text-muted-foreground px-6 py-3 rounded-xl transition-all duration-200 font-medium"
+                >
+                  Cancelar
                 </button>
               </div>
             </div>
-          )}
-
-          <div className="mb-6 flex gap-4">
-            <button
-              onClick={() => setShowCreateForm(!showCreateForm)}
-              className="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg transition-colors"
-            >
-              {showCreateForm ? "Cancelar" : "Nueva Evaluación"}
-            </button>
-          </div>
-
-          {showCreateForm && (
-            <div className="mb-8 p-6 bg-gray-50 rounded-lg border">
-              <h2 className="text-xl font-semibold mb-4">
-                Crear Nueva Evaluación
-              </h2>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Proyecto
-                    </label>
-                    <select
-                      name="id_proyecto"
-                      value={formData.id_proyecto}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value={0}>Seleccionar proyecto</option>
-                      {getProjectOptions().map((proj) => (
-                        <option key={proj.id} value={proj.id}>
-                          {proj.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Empleado
-                    </label>
-                    <select
-                      name="id_empleado"
-                      value={formData.id_empleado}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      disabled={formData.id_proyecto === 0}
-                    >
-                      <option value={0}>
-                        {formData.id_proyecto === 0
-                          ? "Selecciona un proyecto primero"
-                          : "Seleccionar empleado"}
-                      </option>
-                      {getEmployeeOptions().map((emp) => (
-                        <option key={emp.id} value={emp.id}>
-                          {emp.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha
-                    </label>
-                    <input
-                      type="date"
-                      name="fecha"
-                      value={formData.fecha}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Calificación (1-10)
-                    </label>
-                    <input
-                      type="number"
-                      name="calificacion"
-                      value={formData.calificacion}
-                      onChange={handleInputChange}
-                      min="1"
-                      max="10"
-                      step="1"
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fortalezas
-                  </label>
-                  <textarea
-                    name="fortalezas"
-                    value={formData.fortalezas}
-                    onChange={handleInputChange}
-                    required
-                    rows={3}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Describe las fortalezas del empleado..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Áreas de Mejora
-                  </label>
-                  <textarea
-                    name="areas_mejora"
-                    value={formData.areas_mejora}
-                    onChange={handleInputChange}
-                    required
-                    rows={3}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Describe las áreas que necesitan mejora..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Comentarios Adicionales
-                  </label>
-                  <textarea
-                    name="comentarios"
-                    value={formData.comentarios}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Comentarios adicionales sobre el desempeño..."
-                  />
-                </div>
-
-                <div className="flex gap-4">
-                  <button
-                    onClick={handleSubmit}
-                    disabled={loading}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    {loading ? "Creando..." : "Crear Evaluación"}
-                  </button>
-                  <button
-                    onClick={() => setShowCreateForm(false)}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-
-      <div>
-        <h2 className="text-xl font-semibold mb-4">
-          {userRole === "empleado"
-            ? "Mis Evaluaciones de Desempeño"
-            : "Evaluaciones Existentes"}
-        </h2>
-        {evaluaciones.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            {userRole === "empleado" ? (
-              <div>
-                <svg
-                  className="w-16 h-16 text-gray-300 mx-auto mb-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1V8z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-                <p className="text-lg font-medium text-gray-600 mb-2">
-                  No tienes evaluaciones disponibles
-                </p>
-                <p className="text-sm text-gray-500">
-                  Tus evaluaciones de desempeño aparecerán aquí cuando tu
-                  manager las complete
-                </p>
-              </div>
-            ) : (
-              <p>No hay evaluaciones disponibles</p>
-            )}
-          </div>
-        ) : (
-          <div className="grid gap-4">
-            {evaluaciones.map((evaluacion) => (
-              <div
-                key={evaluacion.id_evaluacion}
-                className={`border rounded-lg p-6 shadow-sm ${
-                  userRole === "empleado"
-                    ? "bg-blue-50 border-blue-200"
-                    : "bg-white"
-                }`}
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      Evaluación #{evaluacion.id_evaluacion}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Proyecto:{" "}
-                      {evaluacion.proyecto_nombre || evaluacion.proyecto}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Fecha: {new Date(evaluacion.fecha).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <div
-                        className={`text-2xl font-bold ${
-                          evaluacion.calificacion >= 8
-                            ? "text-primary-600"
-                            : evaluacion.calificacion >= 6
-                            ? "text-yellow-600"
-                            : "text-red-600"
-                        }`}
-                      >
-                        {evaluacion.calificacion}/10
-                      </div>
-                      {userRole === "empleado" && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Tu calificación
-                        </p>
-                      )}
-                    </div>
-                    {(userRole === "manager" ||
-                      userRole === "administrador") && (
-                      <button
-                        onClick={() => setDeletingId(evaluacion.id_evaluacion)}
-                        disabled={deletingId === evaluacion.id_evaluacion}
-                        className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                        title="Eliminar evaluación"
-                      >
-                        {deletingId === evaluacion.id_evaluacion ? (
-                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-red-600 border-t-transparent"></div>
-                        ) : (
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-medium text-green-700 mb-2">
-                      {userRole === "empleado"
-                        ? "Tus Fortalezas:"
-                        : "Fortalezas:"}
-                    </h4>
-                    <p className="text-sm text-gray-700">
-                      {evaluacion.fortalezas}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-orange-700 mb-2">
-                      {userRole === "empleado"
-                        ? "Áreas de Oportunidad:"
-                        : "Áreas de Mejora:"}
-                    </h4>
-                    <p className="text-sm text-gray-700">
-                      {evaluacion.areas_mejora}
-                    </p>
-                  </div>
-                </div>
-
-                {evaluacion.comentarios && (
-                  <div className="mt-4">
-                    <h4 className="font-medium text-gray-700 mb-2">
-                      {userRole === "empleado"
-                        ? "Comentarios de tu Manager:"
-                        : "Comentarios:"}
-                    </h4>
-                    <p className="text-sm text-gray-700">
-                      {evaluacion.comentarios}
-                    </p>
-                  </div>
-                )}
-
-                {userRole === "empleado" && (
-                  <div className="mt-4 pt-3 border-t border-blue-200">
-                    <p className="text-xs text-blue-600 flex items-center">
-                      <svg
-                        className="w-3 h-3 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                      Esta evaluación es de solo lectura
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
           </div>
         )}
-      </div>
+      </>
+    )}
+
+    <div>
+      <h2 className="text-xl font-semibold mb-6 text-foreground">
+        {userRole === "empleado"
+          ? "Mis Evaluaciones de Desempeño"
+          : "Evaluaciones Existentes"}
+      </h2>
+      {evaluaciones.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          {userRole === "empleado" ? (
+            <div className="max-w-md mx-auto">
+              <svg
+                className="w-20 h-20 text-muted-foreground/40 mx-auto mb-6"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1V8z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+              <p className="text-lg font-medium text-foreground mb-3">
+                No tienes evaluaciones disponibles
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Tus evaluaciones de desempeño aparecerán aquí cuando tu
+                manager las complete
+              </p>
+            </div>
+          ) : (
+            <div className="max-w-md mx-auto">
+              <svg
+                className="w-20 h-20 text-muted-foreground/40 mx-auto mb-6"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1V8z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+              <p className="text-lg font-medium text-foreground">
+                No hay evaluaciones disponibles
+              </p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="grid gap-6">
+          {evaluaciones.map((evaluacion) => (
+            <div
+              key={evaluacion.id_evaluacion}
+              className={`border border-border rounded-xl p-6 shadow-lg transition-all duration-200 hover:shadow-xl ${
+                userRole === "empleado"
+                  ? "bg-primary/5 border-primary/20"
+                  : "bg-card"
+              }`}
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    Evaluación #{evaluacion.id_evaluacion}
+                  </h3>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">
+                      <span className="font-medium">Proyecto:</span>{" "}
+                      {evaluacion.proyecto_nombre || evaluacion.proyecto}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      <span className="font-medium">Fecha:</span>{" "}
+                      {new Date(evaluacion.fecha).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <div
+                      className={`text-3xl font-bold ${
+                        evaluacion.calificacion >= 8
+                          ? "text-success"
+                          : evaluacion.calificacion >= 6
+                          ? "text-warning"
+                          : "text-destructive"
+                      }`}
+                    >
+                      {evaluacion.calificacion}/10
+                    </div>
+                    {userRole === "empleado" && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Tu calificación
+                      </p>
+                    )}
+                  </div>
+                  {(userRole === "manager" ||
+                    userRole === "administrador") && (
+                    <button
+                      onClick={() => setDeletingId(evaluacion.id_evaluacion)}
+                      disabled={deletingId === evaluacion.id_evaluacion}
+                      className="p-3 text-destructive hover:text-destructive/80 hover:bg-destructive/10 rounded-xl transition-all duration-200 disabled:opacity-50"
+                      title="Eliminar evaluación"
+                    >
+                      {deletingId === evaluacion.id_evaluacion ? (
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-destructive border-t-transparent"></div>
+                      ) : (
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-success/10 border border-success/20 rounded-xl p-4">
+                  <h4 className="font-semibold text-success mb-3 flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                    </svg>
+                    {userRole === "empleado"
+                      ? "Tus Fortalezas:"
+                      : "Fortalezas:"}
+                  </h4>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {evaluacion.fortalezas}
+                  </p>
+                </div>
+                <div className="bg-warning/10 border border-warning/20 rounded-xl p-4">
+                  <h4 className="font-semibold text-warning mb-3 flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path>
+                    </svg>
+                    {userRole === "empleado"
+                      ? "Áreas de Oportunidad:"
+                      : "Áreas de Mejora:"}
+                  </h4>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {evaluacion.areas_mejora}
+                  </p>
+                </div>
+              </div>
+
+              {evaluacion.comentarios && (
+                <div className="mt-6 bg-accent/30 border border-accent rounded-xl p-4">
+                  <h4 className="font-semibold text-foreground mb-3 flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clipRule="evenodd"></path>
+                    </svg>
+                    {userRole === "empleado"
+                      ? "Comentarios de tu Manager:"
+                      : "Comentarios:"}
+                  </h4>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {evaluacion.comentarios}
+                  </p>
+                </div>
+              )}
+
+              {userRole === "empleado" && (
+                <div className="mt-6 pt-4 border-t border-primary/20">
+                  <p className="text-xs text-primary flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                    Esta evaluación es de solo lectura
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  );
+  </div>
+);
 }

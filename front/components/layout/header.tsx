@@ -92,7 +92,7 @@ export function Header({ user, collapsed }: HeaderProps) {
         collapsed ? "left-[80px]" : "left-[280px]",
         scrolled
           ? "glass border-transparent shadow-subtle"
-          : "bg-white border-transparent"
+          : "bg-card border-transparent"
       )}
     >
       <div className="flex items-center space-x-2">

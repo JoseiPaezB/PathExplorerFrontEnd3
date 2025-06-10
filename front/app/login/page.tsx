@@ -258,7 +258,7 @@ export default function LoginPage() {
         initial="hidden"
         animate="visible"
         variants={rightSlideVariants}
-        className="w-full md:w-1/2 bg-white flex items-center justify-center p-4 md:p-8"
+        className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8"
       >
         <div className="w-full max-w-md">
           {/* Mobile Header */}
@@ -276,10 +276,10 @@ export default function LoginPage() {
             className="space-y-6 md:space-y-8"
           >
             <motion.div variants={itemVariants} className="text-left">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 md:mb-3">
+              <h2 className="text-2xl md:text-3xl font-bold text-white-900 mb-2 md:mb-3">
                 Accede a tu cuenta
               </h2>
-              <p className="text-gray-600 text-sm md:text-base">
+              <p className="text-white-300 text-sm md:text-base">
                 Ingresa tus credenciales corporativas para continuar
               </p>
             </motion.div>

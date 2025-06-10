@@ -20,8 +20,8 @@ export default function CoursesAndCertificationsSection({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Cursos */}
         <Card className="border-purple-200">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
-            <CardTitle className="flex items-center gap-2 text-purple-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-purple-300">
               <GraduationCap className="h-5 w-5 text-purple-600" />
               Cursos ({courses?.courses?.length || 0})
             </CardTitle>
@@ -102,8 +102,8 @@ export default function CoursesAndCertificationsSection({
 
         {/* Certificaciones */}
         <Card className="border-purple-200">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
-            <CardTitle className="flex items-center gap-2 text-purple-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-purple-300">
               <Award className="h-5 w-5 text-purple-600" />
               Certificaciones ({certifications?.certifications?.length || 0})
             </CardTitle>

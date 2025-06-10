@@ -57,8 +57,8 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Habilidades Técnicas */}
         <Card className="border-purple-200">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
-            <CardTitle className="flex items-center gap-2 text-purple-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-purple-300">
               <Code className="h-5 w-5 text-purple-600" />
               Habilidades Técnicas ({technicalSkills.length})
             </CardTitle>
@@ -88,8 +88,8 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
 
         {/* Habilidades Blandas */}
         <Card className="border-purple-200">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
-            <CardTitle className="flex items-center gap-2 text-purple-800">
+          <CardHeader >
+            <CardTitle className="flex items-center gap-2 text-purple-300">
               <Users className="h-5 w-5 text-purple-600" />
               Habilidades Blandas ({softSkills.length})
             </CardTitle>
