@@ -406,19 +406,19 @@ export const SignupForm: React.FC<SignupFormProps> = ({
                       value: "empleado",
                       label: "Empleado",
                       icon: User,
-                      color: "blue",
+                      color: "primary",
                     },
                     {
                       value: "manager",
                       label: "Manager",
                       icon: Users,
-                      color: "green",
+                      color: "primary",
                     },
                     {
                       value: "administrador",
                       label: "Administrador",
                       icon: Shield,
-                      color: "purple",
+                      color: "primary",
                     },
                   ].map((role) => (
                     <label key={role.value} className="cursor-pointer">
