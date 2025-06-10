@@ -2,26 +2,34 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, Building, Trophy, Users } from "lucide-react";
+import {
+  Briefcase,
+  Calendar,
+  MapPin,
+  Building,
+  Trophy,
+  Users,
+} from "lucide-react";
 import LoadingSpinner from "@/components/loading/LoadingSpinner";
 import type { ProfessionalHistory } from "@/types/users";
 
 interface ProfessionalHistorySectionProps {
-    professionalHistory: ProfessionalHistory | null;
-    isLoading: boolean;
-    error: string | null;
+  professionalHistory: ProfessionalHistory | null;
+  isLoading?: boolean;
+  error: string | null;
 }
 
 export default function ProfessionalHistorySection({
-                                                       professionalHistory,
-                                                       isLoading,
-                                                       error,
-                                                   }: ProfessionalHistorySectionProps) {
+  professionalHistory,
+  isLoading,
+  error,
+}: ProfessionalHistorySectionProps) {
+  const renderHistorialProfesional = (historial: string) => {
+    try {
+      const data = JSON.parse(historial);
 
-    const renderHistorialProfesional = (historial: string) => {
-        try {
-            // Intenta parsear como JSON (para casos de formato estructurado)
-            const data = JSON.parse(historial);
+      return (
+        <div>
           {/* Experiencia Laboral */}
           {data.experiencia_laboral && data.experiencia_laboral.length > 0 && (
             <div>
@@ -101,67 +109,62 @@ export default function ProfessionalHistorySection({
                             )}
                           </ul>
                         </div>
-                    )}
-                </div>
-            );
-        } catch (e) {
-            // Si no es JSON válido, mostrar como texto plano con formato
-            return (
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                    <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
-                        {historial}
-                    </pre>
-                </div>
-            );
-        }
-    };
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    } catch (e) {
+      // Si no es JSON válido, mostrar como texto plano con formato
+      return (
+        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
+            {historial}
+          </pre>
+        </div>
+      );
+    }
+  };
 
+  if (isLoading) {
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-primary" />
-                    Historial Profesional
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-16">
-                    {isLoading ? (
-                        <div className="flex justify-center py-8">
-                            <LoadingSpinner size="md" color="primary" text="Cargando historial profesional..." />
-                        </div>
-                    ) : error ? (
-                        <p className="text-red-500">{error}</p>
-                    ) : professionalHistory &&
-                    professionalHistory.professionalHistory.length > 0 ? (
-                        professionalHistory.professionalHistory.map((entry, index) => (
-                            <div
-                                key={index}
-                                className="relative border-l border-muted pl-6 pb-8"
-                            >
-                                {/* Timeline dot - mantener el diseño original */}
-                                <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-primary" />
-                                <div className="space-y-4">
-                                    <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-                                        <h4 className="font-medium">
-                                            {entry.role || "Posición no especificada"}
-                                        </h4>
-                                    </div>
-                                    <p className="text-sm font-medium text-primary">
-                                        {entry.nombre} {entry.apellido}
-                                    </p>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Briefcase className="h-5 w-5 text-primary" />
+            Historial Profesional
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center py-8">
+            <LoadingSpinner
+              size="md"
+              color="primary"
+              text="Cargando historial profesional..."
+            />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-                                    {/* Renderizar el historial (JSON o texto plano) */}
-                                    {entry.historial && renderHistorialProfesional(entry.historial)}
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No hay historial profesional disponible</p>
-                    )}
-                </div>
-            </CardContent>
-        </Card>
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Briefcase className="h-5 w-5 text-primary" />
+            Historial Profesional
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-red-500">{error}</p>
+        </CardContent>
+      </Card>
     );
   }
 
