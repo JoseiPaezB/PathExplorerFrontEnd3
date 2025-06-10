@@ -158,7 +158,7 @@ export function useDashboardData(): UseDashboardDataReturn {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("/api/dashboard", {
+      const response = await axios.get("/dashboard", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
