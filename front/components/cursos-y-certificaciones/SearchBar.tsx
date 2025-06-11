@@ -22,7 +22,7 @@ function SearchBar({
           placeholder={`Buscar ${
             activeTab === "certificaciones" ? "certificaciones" : "cursos"
           }...`}
-          className="w-full rounded-md border border-input bg-white pl-8 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="w-full rounded-md border border-input bg-card pl-8 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           onChange={handleSearch}
           value={searchTerm}
         />

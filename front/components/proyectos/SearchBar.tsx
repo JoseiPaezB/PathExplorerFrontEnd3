@@ -14,7 +14,7 @@ function SearchBar({
       <Input
         type="search"
         placeholder="Buscar proyectos..."
-        className="w-full rounded-md border border-input bg-white pl-8 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        className="w-full rounded-md border border-input bg-primary-900 pl-8 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
