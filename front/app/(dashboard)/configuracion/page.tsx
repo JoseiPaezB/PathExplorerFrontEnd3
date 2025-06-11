@@ -9,8 +9,8 @@ import UserUpdatePasswordForm from "@/components/configuracion/UserUpdatePasswor
 interface FormState {
   nombre: string;
   apellido: string;
-  correo: string;
-  cargo: string;
+  email: string;
+  puesto_actual: string;
 }
 
 interface FormPasswordState {
