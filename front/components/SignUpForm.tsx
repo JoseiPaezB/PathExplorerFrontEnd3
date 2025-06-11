@@ -216,7 +216,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
                 <div className="p-3 bg-gradient-to-r from-primary-500 to-cyan-500 rounded-xl">
                   <User className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800">
+                <h2 className="text-2xl font-bold text-white-800">
                   Información Personal
                 </h2>
               </div>

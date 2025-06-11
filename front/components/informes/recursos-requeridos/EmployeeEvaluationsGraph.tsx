@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Star, Calendar, TrendingUp } from "lucide-react";
 import { EvaluacionEmpleado } from "@/types/informes";
 
 interface DonutData {
@@ -18,6 +18,19 @@ interface DonutData {
   value: number;
   color: string;
 }
+
+const filterConfig = {
+  CALIFICACION: {
+    label: "Calificación",
+    icon: Star,
+    description: "Visualizar por rango de calificación"
+  },
+  PERIODO: {
+    label: "Período",
+    icon: Calendar,
+    description: "Visualizar por período de evaluación"
+  }
+};
 
 function EmployeeEvaluationsGraph({
   employeeEvaluations,
@@ -64,29 +77,29 @@ function EmployeeEvaluationsGraph({
           {
             label: "Excelente (9-10)",
             value: calificacionCounts["Excelente (9-10)"],
-            color: "rgba(75, 192, 192, 0.8)",
+            color: "hsl(142 71% 45%)", // Green for excellent
           },
           {
             label: "Muy Bueno (7-8)",
             value: calificacionCounts["Muy Bueno (7-8)"],
-            color: "rgba(54, 162, 235, 0.8)",
+            color: "hsl(199 89% 48%)", // Light blue for very good
           },
           {
             label: "Bueno (5-6)",
             value: calificacionCounts["Bueno (5-6)"],
-            color: "rgba(255, 206, 86, 0.8)",
+            color: "hsl(47 96% 53%)", // Yellow for good
           },
           {
             label: "Regular (3-4)",
             value: calificacionCounts["Regular (3-4)"],
-            color: "rgba(255, 159, 64, 0.8)",
+            color: "hsl(38 92% 50%)", // Orange for regular
           },
           {
             label: "Necesita Mejora (1-2)",
             value: calificacionCounts["Necesita Mejora (1-2)"],
-            color: "rgba(255, 99, 132, 0.8)",
+            color: "hsl(0 84% 60%)", // Red for needs improvement
           },
-        ];
+        ].filter(item => item.value > 0); // Only show ranges with data
       }
 
       case "PERIODO": {
@@ -112,12 +125,13 @@ function EmployeeEvaluationsGraph({
           periodoCounts[periodo] = (periodoCounts[periodo] || 0) + 1;
         });
 
-        const colors = [
-          "rgba(75, 192, 192, 0.8)",
-          "rgba(54, 162, 235, 0.8)",
-          "rgba(255, 206, 86, 0.8)",
-          "rgba(255, 99, 132, 0.8)",
-        ];
+        const periodColors = {
+          "Últimos 3 meses": "hsl(142 71% 45%)", // Green for recent
+          "3-6 meses": "hsl(199 89% 48%)", // Blue for semi-recent
+          "6-12 meses": "hsl(38 92% 50%)", // Orange for older
+          "Más de 1 año": "hsl(0 84% 60%)", // Red for very old
+          "Otros": "hsl(240 5% 64%)", // Gray for others
+        };
 
         const orderedPeriods = [
           "Últimos 3 meses",
@@ -129,10 +143,10 @@ function EmployeeEvaluationsGraph({
 
         return orderedPeriods
           .filter((periodo) => periodoCounts[periodo] > 0)
-          .map((periodo, index) => ({
+          .map((periodo) => ({
             label: periodo,
             value: periodoCounts[periodo],
-            color: colors[index % colors.length],
+            color: periodColors[periodo as keyof typeof periodColors],
           }));
       }
 
@@ -142,16 +156,31 @@ function EmployeeEvaluationsGraph({
   };
 
   const data = processData();
+  const totalEvaluations = data.reduce((sum, item) => sum + item.value, 0);
 
   const getChartTitle = () => {
     switch (filter) {
       case "CALIFICACION":
-        return "Evaluaciones por Rango de Calificación";
+        return "Distribución por Calificación";
       case "PERIODO":
-        return "Evaluaciones por Período";
+        return "Distribución por Período";
       default:
         return "Evaluaciones de Empleados";
     }
+  };
+
+  const getAverageScore = () => {
+    if (!employeeEvaluations || employeeEvaluations.length === 0) return 0;
+    const total = employeeEvaluations.reduce((sum, evaluation) => sum + evaluation.calificacion, 0);
+    return (total / employeeEvaluations.length).toFixed(1);
+  };
+
+  const getScoreDistribution = () => {
+    if (!employeeEvaluations || employeeEvaluations.length === 0) return { excellent: 0, good: 0, needsImprovement: 0 };
+    const excellent = employeeEvaluations.filter(e => e.calificacion >= 9).length;
+    const good = employeeEvaluations.filter(e => e.calificacion >= 7 && e.calificacion < 9).length;
+    const needsImprovement = employeeEvaluations.filter(e => e.calificacion < 5).length;
+    return { excellent, good, needsImprovement };
   };
 
   useEffect(() => {
@@ -172,72 +201,39 @@ function EmployeeEvaluationsGraph({
           {
             data: data.map((item) => item.value),
             backgroundColor: data.map((item) => item.color),
-            borderColor: data.map((item) => item.color.replace("0.8", "1")),
-            borderWidth: 2,
-            hoverOffset: 4,
+            borderColor: "hsl(0 0% 100%)",
+            borderWidth: 3,
+            hoverOffset: 8,
+            hoverBorderWidth: 4,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: "65%",
         plugins: {
           legend: {
-            position: "right",
-            labels: {
-              generateLabels: (chart) => {
-                const data = chart.data;
-                if (data.labels && data.datasets.length) {
-                  const dataset = data.datasets[0];
-                  const total = dataset.data.reduce(
-                    (sum: number, value: any) => sum + value,
-                    0
-                  );
-
-                  return data.labels.map((label, i) => {
-                    const value = dataset.data[i] as number;
-                    const percentage =
-                      total > 0 ? ((value / total) * 100).toFixed(1) : "0";
-
-                    return {
-                      text: `${label}: ${value} (${percentage}%)`,
-                      fillStyle: Array.isArray(dataset.backgroundColor)
-                        ? (dataset.backgroundColor[i] as string)
-                        : typeof dataset.backgroundColor === "string"
-                        ? dataset.backgroundColor
-                        : "#000",
-                      strokeStyle: Array.isArray(dataset.borderColor)
-                        ? (dataset.borderColor[i] as string)
-                        : typeof dataset.borderColor === "string"
-                        ? dataset.borderColor
-                        : "#000",
-                      lineWidth: dataset.borderWidth as number,
-                      hidden: false,
-                      index: i,
-                    };
-                  });
-                }
-                return [];
-              },
-              padding: 20,
-              font: {
-                size: 14,
-              },
-            },
+            display: false, // We'll create a custom legend
           },
           title: {
-            display: true,
-            text: getChartTitle(),
-            font: {
-              size: 18,
-              weight: "bold",
-            },
-            padding: {
-              top: 10,
-              bottom: 30,
-            },
+            display: false, // We'll use our own title
           },
           tooltip: {
+            backgroundColor: "hsl(0 0% 3.9%)",
+            titleColor: "hsl(0 0% 98%)",
+            bodyColor: "hsl(0 0% 98%)",
+            borderColor: "hsl(0 0% 14.9%)",
+            borderWidth: 1,
+            cornerRadius: 8,
+            padding: 12,
+            titleFont: {
+              size: 14,
+              weight: "600",
+            },
+            bodyFont: {
+              size: 13,
+            },
             callbacks: {
               label: (context) => {
                 const label = context.label || "";
@@ -249,10 +245,20 @@ function EmployeeEvaluationsGraph({
                 );
                 const percentage =
                   total > 0 ? ((value / total) * 100).toFixed(1) : "0";
-                return `${label}: ${value} (${percentage}%)`;
+                return `${label}: ${value} evaluaciones (${percentage}%)`;
               },
             },
           },
+        },
+        animation: {
+          animateRotate: true,
+          animateScale: true,
+          duration: 800,
+          easing: 'easeInOutCubic',
+        },
+        interaction: {
+          intersect: false,
+          mode: 'nearest',
         },
       },
     };
@@ -265,37 +271,255 @@ function EmployeeEvaluationsGraph({
     };
   }, [data, filter]);
 
-  return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Análisis de Evaluaciones</h3>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1">
-              <span>
-                {filter === "CALIFICACION"
-                  ? "CALIFICACIÓN"
-                  : filter === "PERIODO"
-                  ? "PERÍODO"
-                  : ""}
-              </span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => setFilter("CALIFICACION")}>
-              CALIFICACIÓN
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => setFilter("PERIODO")}>
-              PERÍODO
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+  if (!employeeEvaluations || employeeEvaluations.length === 0) {
+    return (
+      <div className="w-full">
+        <div className="rounded-lg border border-dashed border-muted-foreground/25 p-8">
+          <div className="flex flex-col items-center justify-center text-center space-y-3">
+            <Star className="h-12 w-12 text-muted-foreground/50" />
+            <div className="space-y-1">
+              <h3 className="font-semibold text-foreground">No hay datos disponibles</h3>
+              <p className="text-sm text-muted-foreground">
+                No se encontraron evaluaciones de empleados para mostrar
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="h-96">
-        <canvas ref={chartRef} />
+    );
+  }
+
+  const IconComponent = filterConfig[filter].icon;
+  const averageScore = getAverageScore();
+  const scoreDistribution = getScoreDistribution();
+
+  return (
+    <div className="w-full">
+      {/* Header */}
+      <div className="flex flex-col space-y-4 mb-6">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Evaluaciones de Empleados
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {filterConfig[filter].description}
+            </p>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2 min-w-[130px]">
+                <IconComponent className="h-4 w-4" />
+                <span>{filterConfig[filter].label}</span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {(Object.keys(filterConfig) as Array<keyof typeof filterConfig>).map((key) => {
+                const config = filterConfig[key];
+                const Icon = config.icon;
+                return (
+                  <DropdownMenuItem 
+                    key={key}
+                    onSelect={() => setFilter(key)}
+                    className="flex items-center gap-2"
+                  >
+                    <Icon className="h-4 w-4" />
+                    <div className="flex flex-col">
+                      <span>{config.label}</span>
+                      <span className="text-xs text-muted-foreground">{config.description}</span>
+                    </div>
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Stats Summary */}
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <div className="h-2 w-2 rounded-full bg-primary" />
+            <span>Total: {totalEvaluations} evaluaciones</span>
+          </div>
+          <div className="text-xs">•</div>
+          <span>Promedio: {averageScore}/10</span>
+          <div className="text-xs">•</div>
+          <span className="capitalize">{getChartTitle().toLowerCase()}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Chart */}
+        <div className="lg:col-span-3">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Main Chart */}
+            <div className="xl:col-span-2">
+              <div className="relative h-80 w-full">
+                <canvas ref={chartRef} />
+                {/* Center text */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-foreground">{averageScore}</div>
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide">
+                      Promedio
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Custom Legend */}
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm text-foreground mb-4">Distribución</h4>
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                {data.map((item, index) => {
+                  const percentage = totalEvaluations > 0 ? ((item.value / totalEvaluations) * 100).toFixed(1) : "0";
+                  return (
+                    <div key={index} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div 
+                          className="h-2.5 w-2.5 rounded-full flex-shrink-0" 
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span className="text-xs font-medium text-foreground truncate">
+                          {item.label}
+                        </span>
+                      </div>
+                      <div className="text-right flex-shrink-0 ml-2">
+                        <div className="text-xs font-semibold text-foreground">
+                          {item.value}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground leading-tight">
+                          {percentage}%
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {data.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p className="text-sm">Sin datos para mostrar</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="space-y-4">
+          <h4 className="font-medium text-sm text-foreground mb-4">Métricas Clave</h4>
+          
+          {/* Excellent Performance Card */}
+          <div className="p-4 rounded-lg bg-green-500/5 border border-green-500/20">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-lg bg-green-500/10">
+                <Star className="h-4 w-4 text-green-600" />
+              </div>
+              <div>
+                <h5 className="font-medium text-sm text-foreground">Excelente</h5>
+                <p className="text-xs text-muted-foreground">Calificación 9-10</p>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold text-foreground">
+                {scoreDistribution.excellent}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {totalEvaluations > 0 ? ((scoreDistribution.excellent / totalEvaluations) * 100).toFixed(1) : "0"}% del total
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div 
+                  className="bg-green-500 h-2 rounded-full transition-all duration-500" 
+                  style={{ width: `${totalEvaluations > 0 ? (scoreDistribution.excellent / totalEvaluations) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Good Performance Card */}
+          <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/20">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-lg bg-blue-500/10">
+                <TrendingUp className="h-4 w-4 text-blue-600" />
+              </div>
+              <div>
+                <h5 className="font-medium text-sm text-foreground">Muy Bueno</h5>
+                <p className="text-xs text-muted-foreground">Calificación 7-8</p>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold text-foreground">
+                {scoreDistribution.good}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {totalEvaluations > 0 ? ((scoreDistribution.good / totalEvaluations) * 100).toFixed(1) : "0"}% del total
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div 
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-500" 
+                  style={{ width: `${totalEvaluations > 0 ? (scoreDistribution.good / totalEvaluations) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Needs Improvement Card */}
+          <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/20">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-lg bg-red-500/10">
+                <Calendar className="h-4 w-4 text-red-600" />
+              </div>
+              <div>
+                <h5 className="font-medium text-sm text-foreground">Necesita Mejora</h5>
+                <p className="text-xs text-muted-foreground">Calificación &lt; 5</p>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold text-foreground">
+                {scoreDistribution.needsImprovement}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {totalEvaluations > 0 ? ((scoreDistribution.needsImprovement / totalEvaluations) * 100).toFixed(1) : "0"}% del total
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div 
+                  className="bg-red-500 h-2 rounded-full transition-all duration-500" 
+                  style={{ width: `${totalEvaluations > 0 ? (scoreDistribution.needsImprovement / totalEvaluations) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Average Score Card */}
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <h5 className="font-medium text-sm text-foreground">Promedio General</h5>
+                <p className="text-xs text-muted-foreground">Calificación promedio</p>
+              </div>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <div className="text-3xl font-bold text-foreground">
+                {averageScore}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                / 10
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+              Basado en {totalEvaluations} evaluaciones
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
