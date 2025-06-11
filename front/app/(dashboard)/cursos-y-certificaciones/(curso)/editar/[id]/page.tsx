@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Calendar, BookOpen } from "lucide-react";
 import Link from "next/link";
-import { use } from "react";
 
 import {
   Card,
@@ -27,14 +26,17 @@ import {
 
 import { useEditUserCourse } from "@/hooks/useEditUserCourse";
 import { Course, CourseFormData } from "@/types/courses";
-import { EditCourseFormProps } from "@/types/parameters";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/functions";
+import { use } from "react";
+
+interface EditCourseFormProps {
+  params: Promise<{ id: string }>;
+}
 
 export default function EditCourseForm({ params }: EditCourseFormProps) {
-  // const resolvedParams = use(params);
-  const courseId = params?.id; 
-  // const courseId = resolvedParams?.id;
+  const resolvedParams = use(params);
+  const courseId = resolvedParams?.id;
   const router = useRouter();
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
