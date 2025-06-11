@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { UserInfoBanca } from "@/types/users";
-import { params } from "@/types/parameters";
 import { useFetchUserCourses } from "@/hooks/fetchUserCourses";
 import { useFetchUserCertifications } from "@/hooks/fetchUserCertifications";
 import { useFetchUserSkills } from "@/hooks/fetchUserSkills";
@@ -17,8 +16,12 @@ import ProfessionalHistorySection from "@/components/perfil/ProfessionalHistoryS
 import SkillsSection from "@/components/perfil/SkillsSection";
 import ProfessionalTrajectorySection from "@/components/perfil/ProfessionalTrajectorySection";
 
-export default function UserDetailsPage({ params }: { params: params }) {
-  const unwrappedParams: params = use(params);
+interface UserDetailsPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function UserDetailsPage({ params }: UserDetailsPageProps) {
+  const unwrappedParams = use(params);
   const userId = unwrappedParams.id;
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("informacion");
