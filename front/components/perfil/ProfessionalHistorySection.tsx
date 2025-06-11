@@ -10,18 +10,19 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
+import LoadingSpinner from "@/components/loading/LoadingSpinner";
 import type { ProfessionalHistory } from "@/types/users";
 
 interface ProfessionalHistorySectionProps {
   professionalHistory: ProfessionalHistory | null;
   isLoading?: boolean;
-  error?: string | null;
+  error: string | null;
 }
 
 export default function ProfessionalHistorySection({
   professionalHistory,
-  isLoading = false,
-  error = null,
+  isLoading,
+  error,
 }: ProfessionalHistorySectionProps) {
   const renderHistorialProfesional = (historial: string) => {
     try {
@@ -73,6 +74,7 @@ export default function ProfessionalHistorySection({
               />
             </div>
           )}
+
 
           {/* Experiencia Laboral */}
           {data.experiencia_laboral && data.experiencia_laboral.length > 0 && (
@@ -190,6 +192,7 @@ export default function ProfessionalHistorySection({
         }).join('\n');
       };
 
+
       return (
         <div className="bg-muted/30 rounded-xl p-5 border border-muted">
           <div 
@@ -216,6 +219,7 @@ export default function ProfessionalHistorySection({
               <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent"></div>
               <span className="text-muted-foreground">Cargando historial...</span>
             </div>
+
           </div>
         </CardContent>
       </Card>
@@ -245,6 +249,7 @@ export default function ProfessionalHistorySection({
               </div>
             </div>
           </div>
+
         </CardContent>
       </Card>
     );

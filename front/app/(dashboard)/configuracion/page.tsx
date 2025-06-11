@@ -9,8 +9,8 @@ import UserUpdatePasswordForm from "@/components/configuracion/UserUpdatePasswor
 interface FormState {
   nombre: string;
   apellido: string;
-  correo: string;
-  cargo: string;
+  email: string;
+  puesto_actual: string;
 }
 
 interface FormPasswordState {
@@ -29,8 +29,8 @@ export default function ConfiguracionPage() {
   const [formState, setFormState] = useState<FormState>({
     nombre: user?.nombre || "",
     apellido: user?.apellido || "",
-    correo: user?.email || "",
-    cargo: user?.profile?.puesto_actual || "",
+    email: user?.email || "",
+    puesto_actual: user?.profile?.puesto_actual || "",
   });
   const [formPasswordState, setFormPasswordState] = useState<FormPasswordState>(
     {

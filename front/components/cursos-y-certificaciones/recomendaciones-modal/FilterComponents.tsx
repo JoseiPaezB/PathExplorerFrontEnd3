@@ -236,6 +236,7 @@ function FilterComponents({
               </div>
             </div>
           </div>
+
         </div>
 
         {/* Certification Filters */}

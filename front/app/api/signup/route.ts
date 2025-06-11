@@ -1,51 +1,50 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
 import { apiUrl } from "@/constants";
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.json();
+    const BACKEND_URL = apiUrl + "/auth/signup";
 
-    const backendResponse = await axios.post(
-      `${apiUrl}/auth/signup`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
+    const backendResponse = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const responseText = await backendResponse.text();
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("❌ JSON parse error:", parseError);
+      console.error("❌ Response was:", responseText);
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: "El servidor backend devolvió una respuesta inválida",
+          debug: {
+            status: backendResponse.status,
+            responsePreview: responseText.substring(0, 200),
+          },
         },
-      }
-    );
-
-    return NextResponse.json(backendResponse.data, {
+        { status: 500 }
+      );
+    }
+    return NextResponse.json(data, {
       status: backendResponse.status,
     });
   } catch (error) {
-    console.error("❌ Error in signup route:", error);
+    console.error("❌ MAJOR ERROR in signup route:", error);
 
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status || 500;
-      const errorMessage =
-        error.response?.data?.message || "Error connecting to backend server";
-      const errorData = error.response?.data || {
-        success: false,
-        message: errorMessage,
-      };
-
-      console.error("❌ Backend error:", {
-        status,
-        message: errorMessage,
-        data: error.response?.data,
-      });
-
-      return NextResponse.json(errorData, { status });
-    }
-
-    // Handle non-axios errors
-    console.error("❌ Non-axios error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Internal server error",
+        message: "Error conectando con el servidor",
       },
       { status: 500 }
     );

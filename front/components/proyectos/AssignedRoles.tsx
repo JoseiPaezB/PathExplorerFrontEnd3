@@ -10,7 +10,6 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Clock, User } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 import { formatDate } from "@/lib/functions";
 import { RolesByStatus } from "@/types/projectsAdministration";
 function AssignedRoles({ rolesByStatus }: { rolesByStatus: RolesByStatus }) {
@@ -34,7 +33,6 @@ function AssignedRoles({ rolesByStatus }: { rolesByStatus: RolesByStatus }) {
           const iniciales = `${nombre.charAt(0) || ""}${
             apellido.charAt(0) || ""
           }`;
-          const progress = Math.floor(Math.random() * 80) + 10;
 
           return (
             <Card key={role.id_rol} className="border-l-4 border-l-green-500">

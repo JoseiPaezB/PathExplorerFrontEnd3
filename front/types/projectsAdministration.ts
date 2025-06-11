@@ -1,3 +1,12 @@
+export interface ProjectInRole {
+  id_proyecto: number;
+  nombre: string;
+  descripcion: string;
+  fecha_inicio: string;
+  fecha_fin_estimada: string;
+  estado: string;
+}
+
 export interface Role {
   id_rol: number;
   titulo: string;
@@ -5,6 +14,7 @@ export interface Role {
   descripcion: string;
   assignments: Assignment[];
   skills: RoleSkill[];
+  project: ProjectInRole;
 }
 
 export interface Assignment {
@@ -43,7 +53,7 @@ export interface RoleSkill {
 }
 
 export interface ProjectRole {
-  id_rol: number;
+  id_rol?: number;
   titulo: string;
   descripcion: string;
   nivel_experiencia_requerido: number;
@@ -51,6 +61,8 @@ export interface ProjectRole {
 }
 
 export interface ProjectFormData {
+  endDate: string | number | readonly string[] | undefined;
+  startDate: string | number | readonly string[] | undefined;
   id_proyecto: number;
   nombre: string;
   descripcion: string;

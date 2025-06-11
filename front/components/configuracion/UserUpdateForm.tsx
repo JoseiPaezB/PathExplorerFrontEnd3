@@ -14,8 +14,8 @@ import { User } from "@/types/auth";
 interface UserFormData {
   nombre: string;
   apellido: string;
-  correo: string;
-  cargo: string;
+  email: string;
+  puesto_actual: string;
 }
 
 interface UserUpdateFormProps {
@@ -56,8 +56,8 @@ function UserUpdateForm({
       await updateUserProfile({
         nombre: formState.nombre,
         apellido: formState.apellido,
-        correo: formState.correo,
-        cargo: formState.cargo,
+        email: formState.email,
+        puesto_actual: formState.puesto_actual,
       });
 
       setFormSuccess(true);
@@ -104,22 +104,22 @@ function UserUpdateForm({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="correo">Correo electrónico</Label>
+                <Label htmlFor="email">Correo electrónico</Label>
                 <Input
-                  id="correo"
+                  id="email"
                   type="email"
                   placeholder="juan.diaz@empresa.com"
-                  value={formState.correo}
+                  value={formState.email}
                   onChange={handleInputChange}
                 />
               </div>
             </div>
             <div className="space-y-2 mt-4">
-              <Label htmlFor="cargo">Cargo</Label>
+              <Label htmlFor="puesto_actual">Puesto Actual</Label>
               <Input
-                id="cargo"
+                id="puesto_actual"
                 placeholder="Desarrollador Full Stack Senior"
-                value={formState.cargo}
+                value={formState.puesto_actual}
                 onChange={handleInputChange}
               />
             </div>

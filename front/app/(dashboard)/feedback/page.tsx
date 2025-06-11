@@ -141,6 +141,11 @@ export default function FeedbackPage() {
         return;
       }
 
+      if (formData.calificacion < 1 || formData.calificacion > 10) {
+        alert("La calificación debe estar entre 1 y 10.");
+        return;
+      }
+
       await createEvaluacion(formData);
       setShowCreateForm(false);
       setFormData({
