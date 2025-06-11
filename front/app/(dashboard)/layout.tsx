@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 import { cn } from "../../lib/utils";
 
 export default function DashboardLayout({
-                                            children,
-                                        }: {
+    children,
+}: {
     children: React.ReactNode;
 }) {
     const { user, isAuthenticated } = useAuth();
@@ -26,7 +26,7 @@ export default function DashboardLayout({
 
     if (isLoading) {
         return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
                 <div className="flex flex-col items-center">
                     <img
                         src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-Qymnx3GxRns8Bpvp2y0MtAqaHaQmEo.png"
@@ -84,17 +84,6 @@ export default function DashboardLayout({
                 collapsed={collapsed}
                 setCollapsed={setCollapsed}
             />
-
-  return (
-    <div className="flex h-screen overflow-hidden bg-card-50">
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background"
-          >
 
             <motion.div
                 initial={{ opacity: 0 }}

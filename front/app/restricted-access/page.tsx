@@ -11,7 +11,7 @@ export default function RestrictedAccess() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="max-w-md w-full rounded-lg shadow-lg overflow-hidden">
         <div className="bg-primary-600 p-6 flex justify-center">
           <div className="bg-white rounded-full p-3">
             <LockIcon className="h-12 w-12 text-primary-600" />
