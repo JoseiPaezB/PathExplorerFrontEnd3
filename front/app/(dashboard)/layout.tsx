@@ -1,4 +1,5 @@
 "use client";
+
 import type React from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
@@ -6,11 +7,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/contexts/auth-context";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({
-                                            children,
-                                        }: {
+    children,
+}: {
     children: React.ReactNode;
 }) {
     const { user, isAuthenticated } = useAuth();
@@ -20,10 +21,11 @@ export default function DashboardLayout({
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 500); // AuthContext se inicialice
+        }, 500);
         return () => clearTimeout(timer);
     }, []);
 
+    // Loading screen
     if (isLoading) {
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
@@ -50,6 +52,7 @@ export default function DashboardLayout({
         );
     }
 
+    // No user screen
     if (!user) {
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
@@ -76,6 +79,7 @@ export default function DashboardLayout({
         );
     }
 
+    // Main dashboard layout
     return (
         <div className="flex h-screen overflow-hidden bg-gray-50">
             <Sidebar
@@ -84,17 +88,6 @@ export default function DashboardLayout({
                 collapsed={collapsed}
                 setCollapsed={setCollapsed}
             />
-
-  return (
-    <div className="flex h-screen overflow-hidden bg-card-50">
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background"
-          >
 
             <motion.div
                 initial={{ opacity: 0 }}
