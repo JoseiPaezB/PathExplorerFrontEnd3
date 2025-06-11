@@ -29,8 +29,8 @@ export default function ConfiguracionPage() {
   const [formState, setFormState] = useState<FormState>({
     nombre: user?.nombre || "",
     apellido: user?.apellido || "",
-    correo: user?.email || "",
-    cargo: user?.profile?.puesto_actual || "",
+    email: user?.email || "",
+    puesto_actual: user?.profile?.puesto_actual || "",
   });
   const [formPasswordState, setFormPasswordState] = useState<FormPasswordState>(
     {
