@@ -145,7 +145,7 @@ export default function ManagerDashboard({ userName }: ManagerDashboardProps) {
         <motion.div variants={item} className="grid gap-6 md:grid-cols-3">
           {/* Asignaciones pendientes */}
           <Card className="overflow-hidden border-none shadow-card hover:shadow-elevated transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-primary/90 to-primary p-6 pb-14">
+            <CardHeader className="p-6 pb-14">
               <CardTitle className="text-white">
                 Roles por Asignar
               </CardTitle>
@@ -188,7 +188,7 @@ export default function ManagerDashboard({ userName }: ManagerDashboardProps) {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <motion.div
-                      className="flex flex-col items-center justify-center bg-white rounded-full h-28 w-28 shadow-sm"
+                      className="flex flex-col items-center justify-center rounded-full h-28 w-28 shadow-sm"
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.5, duration: 0.5 }}

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Brain, Users, BarChart3, Star } from "lucide-react";
 import { HabilidadRequeridaRol, Rol } from "@/types/informes";
 
 interface DonutData {
@@ -18,6 +18,43 @@ interface DonutData {
   value: number;
   color: string;
 }
+
+const filterConfig = {
+  TODOS: {
+    label: "Todas",
+    icon: Brain,
+    description: "Vista general de todas las habilidades"
+  },
+  "POR ROL": {
+    label: "Por Rol",
+    icon: Users,
+    description: "Filtrar por rol específico"
+  },
+  "POR NIVEL": {
+    label: "Por Nivel",
+    icon: BarChart3,
+    description: "Agrupar por nivel mínimo requerido"
+  },
+  "POR IMPORTANCIA": {
+    label: "Por Importancia",
+    icon: Star,
+    description: "Agrupar por nivel de importancia"
+  }
+};
+
+// Predefined color palette for consistent visualization
+const skillColors = [
+  "hsl(221 83% 53%)", // Blue
+  "hsl(142 71% 45%)", // Green
+  "hsl(38 92% 50%)",  // Orange
+  "hsl(280 100% 70%)", // Purple
+  "hsl(0 84% 60%)",   // Red
+  "hsl(199 89% 48%)", // Light blue
+  "hsl(47 96% 53%)",  // Yellow
+  "hsl(340 75% 55%)", // Pink
+  "hsl(167 85% 45%)", // Teal
+  "hsl(262 83% 58%)", // Violet
+];
 
 function MostRequiredSkillsForRoleGraph({
   requiredAbilitiesForRoles,
@@ -40,6 +77,7 @@ function MostRequiredSkillsForRoleGraph({
 
     switch (filter) {
       case "POR ROL":
+        if (!roleFilter) return [];
         const filteredByRole = requiredAbilitiesForRoles.filter(
           (skill) => skill.titulo === roleFilter
         );
@@ -48,11 +86,14 @@ function MostRequiredSkillsForRoleGraph({
           skillCounts[skill.nombre] = (skillCounts[skill.nombre] || 0) + 1;
         });
 
-        return Object.entries(skillCounts).map(([label, value]) => ({
-          label,
-          value,
-          color: `hsl(${Math.random() * 360}, 70%, 50%)`,
-        }));
+        return Object.entries(skillCounts)
+          .sort(([,a], [,b]) => b - a) // Sort by frequency
+          .slice(0, 10) // Limit to top 10
+          .map(([label, value], index) => ({
+            label: label.length > 25 ? label.substring(0, 25) + "..." : label,
+            value,
+            color: skillColors[index % skillColors.length],
+          }));
 
       case "POR NIVEL":
         const levelCounts = {
@@ -64,41 +105,39 @@ function MostRequiredSkillsForRoleGraph({
         };
 
         requiredAbilitiesForRoles.forEach((skill) => {
-          levelCounts[
-            String(skill.nivel_minimo_requerido) as keyof typeof levelCounts
-          ] =
-            (levelCounts[
-              String(skill.nivel_minimo_requerido) as keyof typeof levelCounts
-            ] || 0) + 1;
+          const level = String(skill.nivel_minimo_requerido);
+          if (level in levelCounts) {
+            levelCounts[level as keyof typeof levelCounts]++;
+          }
         });
 
         return [
           {
-            label: "NIVEL 1",
+            label: "Nivel 1 (Básico)",
             value: levelCounts["1"],
-            color: "rgba(255, 99, 132, 0.8)",
+            color: "hsl(142 71% 45%)", // Green for basic
           },
           {
-            label: "NIVEL 2",
+            label: "Nivel 2 (Intermedio Bajo)",
             value: levelCounts["2"],
-            color: "rgba(255, 159, 64, 0.8)",
+            color: "hsl(47 96% 53%)", // Yellow
           },
           {
-            label: "NIVEL 3",
+            label: "Nivel 3 (Intermedio)",
             value: levelCounts["3"],
-            color: "rgba(255, 206, 86, 0.8)",
+            color: "hsl(38 92% 50%)", // Orange
           },
           {
-            label: "NIVEL 4",
+            label: "Nivel 4 (Avanzado)",
             value: levelCounts["4"],
-            color: "rgba(54, 162, 235, 0.8)",
+            color: "hsl(25 95% 53%)", // Orange-red
           },
           {
-            label: "NIVEL 5",
+            label: "Nivel 5 (Experto)",
             value: levelCounts["5"],
-            color: "rgba(75, 192, 192, 0.8)",
+            color: "hsl(0 84% 60%)", // Red for expert
           },
-        ];
+        ].filter(item => item.value > 0); // Only show levels with data
 
       case "POR IMPORTANCIA":
         const importanceCounts = {
@@ -110,68 +149,77 @@ function MostRequiredSkillsForRoleGraph({
         };
 
         requiredAbilitiesForRoles.forEach((skill) => {
-          importanceCounts[
-            String(skill.importancia) as keyof typeof importanceCounts
-          ] =
-            (importanceCounts[
-              String(skill.importancia) as keyof typeof importanceCounts
-            ] || 0) + 1;
+          const importance = String(skill.importancia);
+          if (importance in importanceCounts) {
+            importanceCounts[importance as keyof typeof importanceCounts]++;
+          }
         });
 
         return [
           {
-            label: "NIVEL 1",
+            label: "Importancia 1 (Baja)",
             value: importanceCounts["1"],
-            color: "rgba(255, 99, 132, 0.8)",
+            color: "hsl(240 5% 64%)", // Gray for low importance
           },
           {
-            label: "NIVEL 2",
+            label: "Importancia 2 (Media-Baja)",
             value: importanceCounts["2"],
-            color: "rgba(255, 159, 64, 0.8)",
+            color: "hsl(199 89% 48%)", // Light blue
           },
           {
-            label: "NIVEL 3",
+            label: "Importancia 3 (Media)",
             value: importanceCounts["3"],
-            color: "rgba(255, 206, 86, 0.8)",
+            color: "hsl(38 92% 50%)", // Orange
           },
           {
-            label: "NIVEL 4",
+            label: "Importancia 4 (Alta)",
             value: importanceCounts["4"],
-            color: "rgba(54, 162, 235, 0.8)",
+            color: "hsl(25 95% 53%)", // Orange-red
           },
           {
-            label: "NIVEL 5",
+            label: "Importancia 5 (Crítica)",
             value: importanceCounts["5"],
-            color: "rgba(75, 192, 192, 0.8)",
+            color: "hsl(0 84% 60%)", // Red for critical
           },
-        ];
+        ].filter(item => item.value > 0); // Only show levels with data
 
-      default:
+      default: // TODOS
         const allCounts: { [key: string]: number } = {};
         requiredAbilitiesForRoles.forEach((skill) => {
           allCounts[skill.nombre] = (allCounts[skill.nombre] || 0) + 1;
         });
-        return Object.entries(allCounts).map(([label, value]) => ({
-          label,
-          value,
-          color: `hsl(${Math.random() * 360}, 70%, 50%)`,
-        }));
+        return Object.entries(allCounts)
+          .sort(([,a], [,b]) => b - a) // Sort by frequency  
+          .slice(0, 10) // Limit to top 10 most required skills
+          .map(([label, value], index) => ({
+            label: label.length > 25 ? label.substring(0, 25) + "..." : label,
+            value,
+            color: skillColors[index % skillColors.length],
+          }));
     }
   };
 
   const data = processData();
+  const totalSkills = data.reduce((sum, item) => sum + item.value, 0);
 
   const getChartTitle = () => {
     switch (filter) {
       case "POR ROL":
-        return "Habilidades Requeridas por Rol";
+        return roleFilter ? `Habilidades para ${roleFilter}` : "Seleccione un Rol";
       case "POR NIVEL":
-        return "Habilidades Requeridas por Nivel";
+        return "Distribución por Nivel Mínimo";
       case "POR IMPORTANCIA":
-        return "Habilidades Requeridas por Importancia";
+        return "Distribución por Importancia";
       default:
-        return "Habilidades Requeridas";
+        return "Top 10 Habilidades Más Requeridas";
     }
+  };
+
+  const getSubtitle = () => {
+    if (filter === "POR ROL" && roleFilter) {
+      return `Habilidades específicas requeridas para el rol de ${roleFilter}`;
+    }
+    return filterConfig[filter].description;
   };
 
   useEffect(() => {
@@ -192,76 +240,39 @@ function MostRequiredSkillsForRoleGraph({
           {
             data: data.map((item) => item.value),
             backgroundColor: data.map((item) => item.color),
-            borderColor: data.map((item) => item.color.replace("0.8", "1")),
-            borderWidth: 2,
-            hoverOffset: 4,
+            borderColor: "hsl(0 0% 100%)",
+            borderWidth: 3,
+            hoverOffset: 8,
+            hoverBorderWidth: 4,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-
+        cutout: "65%",
         plugins: {
           legend: {
-            position: "right",
-            align: "center",
-            labels: {
-              generateLabels: (chart) => {
-                const data = chart.data;
-                if (data.labels && data.datasets.length) {
-                  const dataset = data.datasets[0];
-                  const total = dataset.data.reduce(
-                    (sum: number, value: any) => sum + value,
-                    0
-                  );
-
-                  return data.labels.map((label, i) => {
-                    const value = dataset.data[i] as number;
-                    const percentage =
-                      total > 0 ? ((value / total) * 100).toFixed(1) : "0";
-
-                    return {
-                      text: `${label}: ${value} (${percentage}%)`,
-                      fillStyle: Array.isArray(dataset.backgroundColor)
-                        ? (dataset.backgroundColor[i] as string)
-                        : typeof dataset.backgroundColor === "string"
-                        ? dataset.backgroundColor
-                        : "#000",
-                      strokeStyle: Array.isArray(dataset.borderColor)
-                        ? (dataset.borderColor[i] as string)
-                        : typeof dataset.borderColor === "string"
-                        ? dataset.borderColor
-                        : "#000",
-                      lineWidth: dataset.borderWidth as number,
-                      hidden: false,
-                      index: i,
-                    };
-                  });
-                }
-                return [];
-              },
-              padding: 40,
-              boxWidth: 20,
-              boxHeight: 12,
-              font: {
-                size: 14,
-              },
-            },
+            display: false, // We'll create a custom legend
           },
           title: {
-            display: true,
-            text: getChartTitle(),
-            font: {
-              size: 18,
-              weight: "bold",
-            },
-            padding: {
-              top: 10,
-              bottom: 15,
-            },
+            display: false, // We'll use our own title
           },
           tooltip: {
+            backgroundColor: "hsl(0 0% 3.9%)",
+            titleColor: "hsl(0 0% 98%)",
+            bodyColor: "hsl(0 0% 98%)",
+            borderColor: "hsl(0 0% 14.9%)",
+            borderWidth: 1,
+            cornerRadius: 8,
+            padding: 12,
+            titleFont: {
+              size: 14,
+              weight: "600",
+            },
+            bodyFont: {
+              size: 13,
+            },
             callbacks: {
               label: (context) => {
                 const label = context.label || "";
@@ -273,10 +284,20 @@ function MostRequiredSkillsForRoleGraph({
                 );
                 const percentage =
                   total > 0 ? ((value / total) * 100).toFixed(1) : "0";
-                return `${label}: ${value} (${percentage}%)`;
+                return `${label}: ${value} requisitos (${percentage}%)`;
               },
             },
           },
+        },
+        animation: {
+          animateRotate: true,
+          animateScale: true,
+          duration: 800,
+          easing: 'easeInOutCubic',
+        },
+        interaction: {
+          intersect: false,
+          mode: 'nearest',
         },
       },
     };
@@ -287,65 +308,196 @@ function MostRequiredSkillsForRoleGraph({
         chartInstance.current.destroy();
       }
     };
-  }, [data, filter]);
+  }, [data, filter, roleFilter]);
+
+  // Reset role filter when changing away from "POR ROL"
+  useEffect(() => {
+    if (filter !== "POR ROL") {
+      setRoleFilter(null);
+    }
+  }, [filter]);
+
+  if (!requiredAbilitiesForRoles || requiredAbilitiesForRoles.length === 0) {
+    return (
+      <div className="w-full">
+        <div className="rounded-lg border border-dashed border-muted-foreground/25 p-8">
+          <div className="flex flex-col items-center justify-center text-center space-y-3">
+            <Brain className="h-12 w-12 text-muted-foreground/50" />
+            <div className="space-y-1">
+              <h3 className="font-semibold text-foreground">No hay datos disponibles</h3>
+              <p className="text-sm text-muted-foreground">
+                No se encontraron habilidades requeridas para mostrar
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const IconComponent = filterConfig[filter].icon;
 
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">
-          Análisis de habilidades requeridas por rol
-        </h3>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1">
-              <span>{filter}</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => setFilter("POR ROL")}>
-              POR ROL
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => setFilter("POR NIVEL")}>
-              POR NIVEL
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => setFilter("POR IMPORTANCIA")}>
-              POR IMPORTANCIA
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => setFilter("TODOS")}>
-              TODOS
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        {filter === "POR ROL" && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1">
-                <span>{roleFilter || "Seleccionar Rol"}</span>
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="max-h-48 overflow-y-auto"
-            >
-              {roles?.map((role: Rol) => (
-                <DropdownMenuItem
-                  key={role?.id_rol}
-                  onSelect={() => setRoleFilter(role?.titulo)}
+    <div className="w-full">
+      {/* Header */}
+      <div className="flex flex-col space-y-4 mb-6">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              Habilidades Requeridas por Rol
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {getSubtitle()}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2 min-w-[140px]">
+                  <IconComponent className="h-4 w-4" />
+                  <span>{filterConfig[filter].label}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {(Object.keys(filterConfig) as Array<keyof typeof filterConfig>).map((key) => {
+                  const config = filterConfig[key];
+                  const Icon = config.icon;
+                  return (
+                    <DropdownMenuItem 
+                      key={key}
+                      onSelect={() => setFilter(key)}
+                      className="flex items-center gap-2"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <div className="flex flex-col">
+                        <span>{config.label}</span>
+                        <span className="text-xs text-muted-foreground">{config.description}</span>
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {filter === "POR ROL" && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 min-w-[160px]">
+                    <Users className="h-4 w-4" />
+                    <span className="truncate">{roleFilter || "Seleccionar Rol"}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="max-h-48 overflow-y-auto w-64"
                 >
-                  {role.titulo}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+                  <DropdownMenuLabel>Seleccionar Rol</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {roles?.map((role: Rol) => (
+                    <DropdownMenuItem
+                      key={role?.id_rol}
+                      onSelect={() => setRoleFilter(role?.titulo)}
+                      className="flex items-center gap-2"
+                    >
+                      <Users className="h-4 w-4" />
+                      <span className="truncate">{role.titulo}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+        </div>
+
+        {/* Stats Summary */}
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <div className="h-2 w-2 rounded-full bg-primary" />
+            <span>Total: {totalSkills} requisitos</span>
+          </div>
+          <div className="text-xs">•</div>
+          <span className="capitalize">{getChartTitle().toLowerCase()}</span>
+          {filter === "POR ROL" && roleFilter && (
+            <>
+              <div className="text-xs">•</div>
+              <span>Rol: {roleFilter}</span>
+            </>
+          )}
+        </div>
       </div>
-      <div className="h-96">
-        <canvas ref={chartRef} />
-      </div>
+
+      {filter === "POR ROL" && !roleFilter ? (
+        <div className="rounded-lg border border-dashed border-muted-foreground/25 p-8">
+          <div className="flex flex-col items-center justify-center text-center space-y-3">
+            <Users className="h-12 w-12 text-muted-foreground/50" />
+            <div className="space-y-1">
+              <h3 className="font-semibold text-foreground">Seleccione un rol</h3>
+              <p className="text-sm text-muted-foreground">
+                Elija un rol específico para ver sus habilidades requeridas
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Chart */}
+          <div className="lg:col-span-2">
+            <div className="relative h-80 w-full">
+              <canvas ref={chartRef} />
+              {/* Center text */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-foreground">{totalSkills}</div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wide">
+                    Requisitos
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Custom Legend */}
+          <div className="space-y-3">
+            <h4 className="font-medium text-sm text-foreground mb-4">Distribución</h4>
+            <div className="space-y-2 max-h-80 overflow-y-auto">
+              {data.map((item, index) => {
+                const percentage = totalSkills > 0 ? ((item.value / totalSkills) * 100).toFixed(1) : "0";
+                return (
+                  <div key={index} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div 
+                        className="h-2.5 w-2.5 rounded-full flex-shrink-0" 
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-xs font-medium text-foreground truncate" title={item.label}>
+                        {item.label}
+                      </span>
+                    </div>
+                    <div className="text-right flex-shrink-0 ml-2">
+                      <div className="text-xs font-semibold text-foreground">
+                        {item.value}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground leading-tight">
+                        {percentage}%
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {data.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <p className="text-sm">Sin datos para mostrar</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

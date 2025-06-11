@@ -159,7 +159,7 @@ export default function PerfilPage() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-purple-200 ">
         <CardContent className="p-6">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col gap-6 md:flex-row md:items-center">
@@ -173,18 +173,18 @@ export default function PerfilPage() {
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-1.5">
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-white-900">
                   {user?.nombre || "Usuario"}
                 </h1>
                 <p className="text-lg text-purple-700 font-medium">
                   {user?.profile?.puesto_actual || "Cargo no especificado"}
                 </p>
                 <div className="flex flex-wrap gap-3 pt-1">
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
+                  <div className="flex items-center gap-1 text-sm text-white-600">
                     <Calendar className="h-4 w-4 text-purple-500" />
                     <span>{formatDate(user?.fecha_contratacion || "")}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
+                  <div className="flex items-center gap-1 text-sm text-white-600">
                     <Mail className="h-4 w-4 text-purple-500" />
                     <span>{user?.email}</span>
                   </div>
@@ -205,7 +205,7 @@ export default function PerfilPage() {
         onValueChange={setActiveTab}
         className="space-y-4"
       >
-        <TabsList className="grid w-full grid-cols-3 lg:w-auto bg-purple-100">
+        <TabsList className="grid w-full grid-cols-3 lg:w-auto">
           <TabsTrigger
             value="informacion"
             className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"

@@ -550,19 +550,27 @@ function page() {
           </div>
         </TabsContent>
         
-        <TabsContent value="empleados" className="space-y-4">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div id="employee-certifications-graph" data-title="Certificaciones de Empleados">
-              <EmployeeCertificationsGraph
-                employeeCertifications={informes?.informes.employeeCertifications}
-              />
-            </div>
-            <div id="employee-courses-graph" data-title="Cursos de Empleados">
-              <EmployeeCoursesGraph
-                employeeCourses={informes?.informes.employeeCourses}
-              />
-            </div>
+       <TabsContent value="empleados" className="space-y-6 mt-6">
+        <div className="space-y-8">
+          <div 
+            id="employee-certifications-graph" 
+            data-title="Certificaciones de Empleados"
+            className="w-full"
+          >
+            <EmployeeCertificationsGraph
+              employeeCertifications={informes?.informes.employeeCertifications}
+            />
           </div>
+          <div 
+            id="employee-courses-graph" 
+            data-title="Cursos de Empleados"
+            className="w-full"
+          >
+            <EmployeeCoursesGraph
+              employeeCourses={informes?.informes.employeeCourses}
+            />
+          </div>
+        </div>
         </TabsContent>
       </Tabs>
     </div>

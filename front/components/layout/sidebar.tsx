@@ -113,14 +113,14 @@ export function Sidebar({
         variants={shouldReduceMotion ? {} : sidebarVariants}
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
-          "fixed left-0 top-0 flex h-screen flex-col border-r bg-white/95 backdrop-blur-xl backdrop-saturate-150 z-30",
+          "fixed left-0 top-0 flex h-screen flex-col border-r bg-card/95 backdrop-blur-xl backdrop-saturate-150 z-30",
           "shadow-[0_0_15px_rgba(0,0,0,0.05)]",
           className
         )}
       >
         <div className="flex h-full flex-col">
           {/* Header with logo toggle */}
-          <div className="flex items-center justify-between h-16 px-4 border-b bg-white/50">
+          <div className="flex items-center justify-between h-16 px-4 border-b bg-card/50">
             <AnimatePresence mode="wait">
               <motion.div
                 key="logo-toggle"
@@ -143,7 +143,7 @@ export function Sidebar({
           {/* User Profile Section */}
           <div
             className={cn(
-              "flex items-center px-4 py-4 border-b bg-gray-50/50",
+              "flex items-center px-4 py-4 border-b bg-card-50/50",
               collapsed && "justify-center"
             )}
           >
@@ -156,8 +156,8 @@ export function Sidebar({
                   exit="collapsed"
                   className="ml-3 overflow-hidden"
                 >
-                  <p className="text-sm font-medium text-gray-900 truncate">{`${user?.nombre} ${user?.apellido}`}</p>
-                  <p className="text-xs text-gray-500 truncate capitalize">
+                  <p className="text-sm font-medium text-white-900 truncate">{`${user?.nombre} ${user?.apellido}`}</p>
+                  <p className="text-xs text-white-500 truncate capitalize">
                     {userRole}
                   </p>
                 </motion.div>

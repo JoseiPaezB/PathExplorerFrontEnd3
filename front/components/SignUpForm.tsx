@@ -168,7 +168,10 @@ return (
                 <div className="p-3 bg-gradient-to-r from-primary-500 to-cyan-500 rounded-xl">
                   <User className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800">Información Personal</h2>
+                <h2 className="text-2xl font-bold text-white-800">
+                  Información Personal
+                </h2>
+
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -344,9 +347,25 @@ return (
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[
-                    { value: 'empleado', label: 'Empleado', icon: User, color: 'blue' },
-                    { value: 'manager', label: 'Manager', icon: Users, color: 'green' },
-                    { value: 'administrador', label: 'Administrador', icon: Shield, color: 'purple' }
+                    {
+                      value: "empleado",
+                      label: "Empleado",
+                      icon: User,
+                      color: "primary",
+                    },
+                    {
+                      value: "manager",
+                      label: "Manager",
+                      icon: Users,
+                      color: "primary",
+                    },
+                    {
+                      value: "administrador",
+                      label: "Administrador",
+                      icon: Shield,
+                      color: "primary",
+                    },
+
                   ].map((role) => (
                     <label key={role.value} className="cursor-pointer">
                       <input
