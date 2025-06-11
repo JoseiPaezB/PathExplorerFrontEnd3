@@ -1,11 +1,10 @@
-import { CourseAndCertificate } from "@/types/recommendations";
 import { useState, useEffect } from "react";
 
 function RecommendationItem({
   item,
   delay = 0,
 }: {
-  item: CourseAndCertificate;
+  item: any;
   delay?: number;
 }) {
   const [isVisible, setIsVisible] = useState(false);

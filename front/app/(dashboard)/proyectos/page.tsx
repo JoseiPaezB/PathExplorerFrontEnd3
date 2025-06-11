@@ -58,7 +58,6 @@ export default function ProyectosPage() {
 
   const { projects, rolesByStatus, loading, error, refreshProjects } =
     useGetManagerProjects();
-
   const {
     candidates: empleadosBanca,
     isLoading: loadingCandidates,
