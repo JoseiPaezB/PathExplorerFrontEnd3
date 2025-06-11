@@ -17,7 +17,7 @@ export function RoleCard({
   hasPendingRequest 
 }: RoleCardProps) {
   return (
-    <div className="border rounded-lg p-4 hover:bg-slate-50 transition-colors">
+  <div className="border rounded-lg p-4 hover:bg-white/10 transition-colors">
       <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
         <div>
           <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ export function RoleCard({
           {role.roleWithProject?.skills
             ?.slice(0, 5)
             .map((skill: Skill, idx: number) => (
-              <Badge key={idx} variant="outline" className="bg-slate-50">
+              <Badge key={idx} variant="outline" className="bg-purple-800">
                 {skill.nombre}{" "}
                 {skill.nivel_minimo_requerido
                   ? `(Nivel ${skill.nivel_minimo_requerido})`
