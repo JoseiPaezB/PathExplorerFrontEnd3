@@ -1,12 +1,15 @@
 "use client";
 import { use } from "react";
-import { params } from "@/types/parameters";
 import { useFetchUserProjects } from "@/hooks/fetchUserProjects";
 import NoUserProjectState from "@/components/estado/NoUserProjectState";
 import HasUserProjectState from "@/components/estado/HasUserProjectState";
 import { useRouter } from "next/navigation";
-export default function UserStatePage({ params }: { params: params }) {
-  const unwrappedParams: params = use(params);
+interface UserStatePageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function UserStatePage({ params }: UserStatePageProps) {
+  const unwrappedParams = use(params);
   const employeeId = unwrappedParams.id;
   const router = useRouter();
   const {

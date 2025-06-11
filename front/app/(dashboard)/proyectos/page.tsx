@@ -58,7 +58,6 @@ export default function ProyectosPage() {
 
   const { projects, rolesByStatus, loading, error, refreshProjects } =
     useGetManagerProjects();
-
   const {
     candidates: empleadosBanca,
     isLoading: loadingCandidates,
@@ -146,7 +145,7 @@ export default function ProyectosPage() {
         className="space-y-4"
       >
         <TabsList>
-          <TabsTrigger value="kanban">Vista Kanban</TabsTrigger>
+          <TabsTrigger value="kanban">Vista Roles</TabsTrigger>
           <TabsTrigger value="lista">Vista Proyectos</TabsTrigger>
         </TabsList>
 

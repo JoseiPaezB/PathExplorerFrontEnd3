@@ -56,7 +56,7 @@ function RecommendationsModal({ closeModal }: { closeModal: () => void }) {
                 {recommendations?.recommendations?.cursos_recomendados.length >
                 0 ? (
                   recommendations?.recommendations?.cursos_recomendados.map(
-                    (course, index) => (
+                    (course: any, index: number) => (
                       <RecommendationItem
                         item={course}
                         delay={index * 100}
@@ -73,7 +73,7 @@ function RecommendationsModal({ closeModal }: { closeModal: () => void }) {
                 {recommendations?.recommendations?.certificaciones_recomendadas
                   .length > 0 ? (
                   recommendations?.recommendations?.certificaciones_recomendadas?.map(
-                    (cert, index) => (
+                    (cert: any, index: number) => (
                       <RecommendationItem
                         item={cert}
                         delay={index * 100}

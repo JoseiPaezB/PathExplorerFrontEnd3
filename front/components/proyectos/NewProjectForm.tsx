@@ -16,12 +16,15 @@ function NewProjectForm({ onSuccess }: { onSuccess: () => void }) {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
   const [formData, setFormData] = useState<ProjectFormData>({
+    id_proyecto: 0,
     nombre: "",
     descripcion: "",
     fecha_inicio: "",
     fecha_fin_estimada: "",
     prioridad: 3,
     roles: [],
+    startDate: "",
+    endDate: "",
   });
 
   const [formLoading, setFormLoading] = useState(false);
@@ -212,7 +215,7 @@ function NewProjectForm({ onSuccess }: { onSuccess: () => void }) {
         roles: formData.roles.map((role) => ({
           titulo: role.titulo,
           descripcion: role.descripcion,
-          importancia: role.importancia,
+          importancia: 3,
           nivel_experiencia_requerido: role.nivel_experiencia_requerido,
           habilidades: role.habilidades.map((skill) => ({
             id_habilidad: skill.id_habilidad,
